@@ -2,10 +2,11 @@
 
 #include "collision.h"
 #include "platform.h"
+#include "camera.h"
 
 enum
 {
-	MAX_PLATFORM_LIST_SIZE = 100
+	MAX_PLATFORM_LIST_SIZE = 1000
 };
 
 enum Direction
@@ -17,6 +18,7 @@ enum Direction
 };
 
 void Draw_AllPlatform();
+void Clear_Map();
 
 void Remove_Platform(struct Platform* platform);
 

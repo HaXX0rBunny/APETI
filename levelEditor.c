@@ -5,6 +5,14 @@ extern const int window_width;
 extern const int window_height;
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
 
+extern struct Camera camera;
+
+enum
+{
+	PLATFORM_W = 50,
+	PLATFORM_H = 50
+};
+
 void Edit_Delete_Platform(void)
 {
 	if (CP_Input_MouseDown(MOUSE_BUTTON_RIGHT))
@@ -38,17 +46,11 @@ void Edit_Add_Platform(void)
 	if (CP_Input_KeyTriggered(KEY_8))
 		LastKey = KEY_8;
 
-	const int numberOfTilesW = 20;
-	const int numberOfTilesH = 10;
-
-	int platformW = window_width / numberOfTilesW;
-	int platformH = window_height / numberOfTilesH;
-
 	int mouseX = (int)floor(CP_Input_GetMouseWorldX());
 	int mouseY = (int)floor(CP_Input_GetMouseWorldY());
 
-	int gridCoordX = mouseX / platformW;
-	int gridCoordY = mouseY / platformH;
+	int gridCoordX = (mouseX / PLATFORM_W) - (mouseX < 0 ? 1 : 0);
+	int gridCoordY = (mouseY / PLATFORM_H) - (mouseY < 0 ? 1 : 0);
 
 	if (CP_Input_MouseDown(MOUSE_BUTTON_LEFT))
 	{
@@ -93,8 +95,8 @@ void Edit_Add_Platform(void)
 		if (platform == NULL)
 			return;
 
-		Initialize_Platform(platform, (float)(gridCoordX * platformW), (float)(gridCoordY * platformH),
-			(float)platformW, (float)platformH, color, 0, 1);
+		Initialize_Platform(platform, (float)(gridCoordX * PLATFORM_W), (float)(gridCoordY * PLATFORM_H),
+			(float)PLATFORM_W, (float)PLATFORM_H, color, 0, 1);
 	}
 }
 
@@ -102,6 +104,31 @@ void Edit_Grid(void)
 {
 	Edit_Delete_Platform();
 	Edit_Add_Platform();
+}
+
+void Edit_Update_Text(void)
+{
+	CP_Settings_Fill(CP_Color_Create(0, 0, 0, 100));
+
+	CP_Settings_TextSize(50);
+	CP_Font_DrawText("Edit Mode", 0, 0);
+
+	CP_Settings_TextSize(20);
+	char buffer[50] = { '\0' };
+
+	sprintf_s(buffer, 50, "X: %f", CP_Input_GetMouseWorldX());
+	CP_Font_DrawText(buffer, 0, 50);
+
+	sprintf_s(buffer, 50, "Y: %f", CP_Input_GetMouseWorldY());
+	CP_Font_DrawText(buffer, 0, 70);
+}
+
+void Edit_Change_Mode(void)
+{
+	if (CP_Input_KeyTriggered(KEY_INSERT))
+	{
+		CP_Engine_SetNextGameStateForced(game_init, game_update, game_exit);
+	}
 }
 
 struct Platform* Platform_Mouse_Collision()
@@ -124,23 +151,24 @@ struct Platform* Platform_Mouse_Collision()
 void level_editor_state_init(void)
 {
 	Load_Level_From_File("myLevel.lvl");
+	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
 }
 
 void level_editor_state_update(void)
 {
-	CP_Color color_white = CP_Color_Create(255, 255, 255, 255);
-	CP_Graphics_ClearBackground(color_white);
+	CP_Graphics_ClearBackground(CP_Color_Create(255, 255, 255, 255));
+
+	Edit_Update_Text();
+	Update_Camera();
 
 	Draw_AllPlatform();
-	Player_Update();
-	Player_Draw();
-
-	//edit mode text
-
 	Edit_Grid();
+
+	Edit_Change_Mode();
 }
 
 void level_editor_state_exit(void)
 {
 	Save_Level_To_File("myLevel.lvl");
+	Clear_Map();
 }

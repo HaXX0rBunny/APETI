@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="camera.c" />
     <ClCompile Include="collision.c" />
+    <ClCompile Include="game.c" />
     <ClCompile Include="gravity.c" />
     <ClCompile Include="levelEditor.c" />
     <ClCompile Include="levelSaver.c" />
@@ -29,7 +31,9 @@
     <ClCompile Include="player.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="gravity.h" />
     <ClInclude Include="levelEditor.h" />
     <ClInclude Include="levelSaver.h" />
