@@ -35,21 +35,21 @@ void Player_Update()
 	struct Platform dir[4];
 	Collision_Player_Platform(dir);
 
-	if (CP_Input_KeyDown(KEY_A) && !dir[Right].visibility)
+	if (CP_Input_KeyDown(KEY_A) && !dir[Right].exist)
 	{
 		player.Velocity.x = -300;
 	}
-	if (dir[Right].visibility && player.Velocity.x < 0)
+	if (dir[Right].exist && player.Velocity.x < 0)
 	{
 		player.Velocity.x = 0;
 		player.Pos.x = dir[Right].Pos.x + dir[Right].w;
 	}
 
-	if (CP_Input_KeyDown(KEY_D) && !dir[Left].visibility)
+	if (CP_Input_KeyDown(KEY_D) && !dir[Left].exist)
 	{
 		player.Velocity.x = 300;
 	}
-	if (dir[Left].visibility && player.Velocity.x > 0)
+	if (dir[Left].exist && player.Velocity.x > 0)
 	{
 		player.Velocity.x = 0;
 		player.Pos.x = dir[Left].Pos.x - player.w;
@@ -60,19 +60,20 @@ void Player_Update()
 		player.Velocity.x = 0;
 	}
 
-	if (!dir[Down].visibility)
+	if (!dir[Down].exist)
 	{
 		Calculate_Gravity(&player.Velocity.y, &player.Acceleration.y, PLAYER_GFORCE);
+		player.isGrounded = 0;
 	}
 	else
 	{
 		player.Velocity.y = 0;
 		player.isGrounded = 1;
-		if (!dir[Right].visibility && !dir[Left].visibility)
+		if (!dir[Right].exist && !dir[Left].exist)
 			player.Pos.y = dir[Down].Pos.y - player.h;
 	}
 
-	if (dir[Up].visibility && player.Velocity.y <= 0)
+	if (dir[Up].exist && player.Velocity.y <= 0)
 	{
 		player.Velocity.y = 0;
 	}
@@ -97,11 +98,11 @@ void Collision_Player_Platform(struct Platform dir[4])
 	int i = 0;
 
 	for (i = 0; i < 4; i++)
-		dir[i].visibility = 0;
+		dir[i].exist = 0;
 
 	for (i = 0; i < MAX_PLATFORM_LIST_SIZE; i++)
 	{
-		if (!platformList[i].visibility)
+		if (!platformList[i].exist)
 			continue;
 
 		struct Platform platform = platformList[i];
@@ -111,25 +112,25 @@ void Collision_Player_Platform(struct Platform dir[4])
 		float platformH = platform.h;
 
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y, player.w / 3, 1,
-			platformX, platformY, platformW, platformH) && !dir[Up].visibility)
+			platformX, platformY, platformW, platformH) && !dir[Up].exist)
 		{
 			dir[Up] = platform;
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y + player.h, player.w / 3, 1,
-			platformX, platformY, platformW, platformH) && !dir[Down].visibility)
+			platformX, platformY, platformW, platformH) && !dir[Down].exist)
 		{
 			dir[Down] = platform;
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x, player.Pos.y, 1, player.h / 3,
-			platformX, platformY, platformW, platformH) && !dir[Right].visibility)
+			platformX, platformY, platformW, platformH) && !dir[Right].exist)
 		{
 			dir[Right] = platform;
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + player.w - 1, player.Pos.y, 1, player.h / 3,
-			platformX, platformY, platformW, platformH) && !dir[Left].visibility)
+			platformX, platformY, platformW, platformH) && !dir[Left].exist)
 		{
 			dir[Left] = platform;
 		}
