@@ -39,5 +39,6 @@ void game_update(void)
 
 void game_exit(void)
 {
+	Save_Level_To_File("myLevel.lvl");
 	Clear_Map();
 }
