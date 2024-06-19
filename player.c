@@ -2,8 +2,41 @@
 
 #define PLAYER_GFORCE -500.f
 
-struct Player player = { 100, 100, 30, 30, 0, 0, 0, 0, 0, 0, 0, {255, 0, 0, 255} };
+struct Player player = { 6, 6, 30, 30, {300, 0}, {0, 0}, {0, 0}, 0, {255, 0, 0, 255} };
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
+extern const int window_width;
+extern const int window_height;
+
+void Player_Init()
+{
+	player.health = 6;
+	player.maxHealth = 6;
+
+	player.Pos.x = 300;
+	player.Pos.y = 0;
+
+	player.w = 30;
+	player.h = 30;
+
+	player.Velocity.x = 0;
+	player.Velocity.y = 0;
+
+	player.Acceleration.x = 0;
+	player.Acceleration.y = 0;
+
+	player.isGrounded = 0;
+
+	player.color = CP_Color_Create(255, 0, 0, 255);
+}
+
+void Player_AddHealth(int value)
+{
+	player.health += value;
+
+	if (player.health > player.maxHealth) player.maxHealth = player.health;
+	if (player.health <= 0) Player_Dead();
+}
+
 
 void Player_Jump(float initV)
 {
@@ -15,14 +48,6 @@ void Player_Jump(float initV)
 	}
 }
 
-void Player_AddHealth(int value)
-{
-	player.health += value;
-
-	if (player.health > player.maxHealth) player.maxHealth = player.health;
-	if (player.health <= 0) Player_Dead();
-}
-
 void Player_Dead()
 {
 
@@ -30,6 +55,8 @@ void Player_Dead()
 
 void Player_Update()
 {
+	CP_Settings_Translate(-player.Pos.x + (window_width / 2), -player.Pos.y + (window_height / 2));
+
 	float t = CP_System_GetDt();
 
 	struct Platform dir[4];

@@ -3,6 +3,8 @@
 struct Platform platformList[MAX_PLATFORM_LIST_SIZE] = { { 0, 0, 0, 0, {0, 0, 0, 0}, 0, 0} };
 int platformCount = 0;
 
+extern struct Camera camera;
+
 void Draw_AllPlatform()
 {
 	int i = 0;
@@ -13,6 +15,16 @@ void Draw_AllPlatform()
 		CP_Settings_Fill(platformList[i].color);
 		CP_Graphics_DrawRect(platformList[i].Pos.x, platformList[i].Pos.y,
 			platformList[i].w, platformList[i].h);
+	}
+}
+
+void Clear_Map()
+{
+	int i = 0;
+	for (i = 0; i < MAX_PLATFORM_LIST_SIZE; i++)
+	{
+		if (platformList[i].exist == 0) continue;
+		Remove_Platform(&platformList[i]);
 	}
 }
 
