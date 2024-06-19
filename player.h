@@ -20,6 +20,8 @@ struct Player
 	CP_Color color;
 };
 
+void Player_Init();
+
 void Player_Jump(float initV);
 
 void Player_AddHealth(int value);

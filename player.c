@@ -2,8 +2,41 @@
 
 #define PLAYER_GFORCE -500.f
 
-struct Player player = { 100, 100, 30, 30, 0, 0, 0, 0, 0, 0, 0, {255, 0, 0, 255} };
+struct Player player = { 6, 6, 30, 30, {300, 0}, {0, 0}, {0, 0}, 0, {255, 0, 0, 255} };
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
+extern const int window_width;
+extern const int window_height;
+
+void Player_Init()
+{
+	player.health = 6;
+	player.maxHealth = 6;
+
+	player.Pos.x = 300;
+	player.Pos.y = 0;
+
+	player.w = 30;
+	player.h = 30;
+
+	player.Velocity.x = 0;
+	player.Velocity.y = 0;
+
+	player.Acceleration.x = 0;
+	player.Acceleration.y = 0;
+
+	player.isGrounded = 0;
+
+	player.color = CP_Color_Create(255, 0, 0, 255);
+}
+
+void Player_AddHealth(int value)
+{
+	player.health += value;
+
+	if (player.health > player.maxHealth) player.maxHealth = player.health;
+	if (player.health <= 0) Player_Dead();
+}
+
 
 void Player_Jump(float initV)
 {
@@ -15,14 +48,6 @@ void Player_Jump(float initV)
 	}
 }
 
-void Player_AddHealth(int value)
-{
-	player.health += value;
-
-	if (player.health > player.maxHealth) player.maxHealth = player.health;
-	if (player.health <= 0) Player_Dead();
-}
-
 void Player_Dead()
 {
 
@@ -30,26 +55,28 @@ void Player_Dead()
 
 void Player_Update()
 {
+	CP_Settings_Translate(-player.Pos.x + (window_width / 2), -player.Pos.y + (window_height / 2));
+
 	float t = CP_System_GetDt();
 
 	struct Platform dir[4];
 	Collision_Player_Platform(dir);
 
-	if (CP_Input_KeyDown(KEY_A) && !dir[Right].visibility)
+	if (CP_Input_KeyDown(KEY_A) && !dir[Right].exist)
 	{
 		player.Velocity.x = -300;
 	}
-	if (dir[Right].visibility && player.Velocity.x < 0)
+	if (dir[Right].exist && player.Velocity.x < 0)
 	{
 		player.Velocity.x = 0;
 		player.Pos.x = dir[Right].Pos.x + dir[Right].w;
 	}
 
-	if (CP_Input_KeyDown(KEY_D) && !dir[Left].visibility)
+	if (CP_Input_KeyDown(KEY_D) && !dir[Left].exist)
 	{
 		player.Velocity.x = 300;
 	}
-	if (dir[Left].visibility && player.Velocity.x > 0)
+	if (dir[Left].exist && player.Velocity.x > 0)
 	{
 		player.Velocity.x = 0;
 		player.Pos.x = dir[Left].Pos.x - player.w;
@@ -60,19 +87,20 @@ void Player_Update()
 		player.Velocity.x = 0;
 	}
 
-	if (!dir[Down].visibility)
+	if (!dir[Down].exist)
 	{
 		Calculate_Gravity(&player.Velocity.y, &player.Acceleration.y, PLAYER_GFORCE);
+		player.isGrounded = 0;
 	}
 	else
 	{
 		player.Velocity.y = 0;
 		player.isGrounded = 1;
-		if (!dir[Right].visibility && !dir[Left].visibility)
+		if (!dir[Right].exist && !dir[Left].exist)
 			player.Pos.y = dir[Down].Pos.y - player.h;
 	}
 
-	if (dir[Up].visibility && player.Velocity.y <= 0)
+	if (dir[Up].exist && player.Velocity.y <= 0)
 	{
 		player.Velocity.y = 0;
 	}
@@ -97,11 +125,11 @@ void Collision_Player_Platform(struct Platform dir[4])
 	int i = 0;
 
 	for (i = 0; i < 4; i++)
-		dir[i].visibility = 0;
+		dir[i].exist = 0;
 
 	for (i = 0; i < MAX_PLATFORM_LIST_SIZE; i++)
 	{
-		if (!platformList[i].visibility)
+		if (!platformList[i].exist)
 			continue;
 
 		struct Platform platform = platformList[i];
@@ -111,25 +139,25 @@ void Collision_Player_Platform(struct Platform dir[4])
 		float platformH = platform.h;
 
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y, player.w / 3, 1,
-			platformX, platformY, platformW, platformH) && !dir[Up].visibility)
+			platformX, platformY, platformW, platformH) && !dir[Up].exist)
 		{
 			dir[Up] = platform;
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y + player.h, player.w / 3, 1,
-			platformX, platformY, platformW, platformH) && !dir[Down].visibility)
+			platformX, platformY, platformW, platformH) && !dir[Down].exist)
 		{
 			dir[Down] = platform;
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x, player.Pos.y, 1, player.h / 3,
-			platformX, platformY, platformW, platformH) && !dir[Right].visibility)
+			platformX, platformY, platformW, platformH) && !dir[Right].exist)
 		{
 			dir[Right] = platform;
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + player.w - 1, player.Pos.y, 1, player.h / 3,
-			platformX, platformY, platformW, platformH) && !dir[Left].visibility)
+			platformX, platformY, platformW, platformH) && !dir[Left].exist)
 		{
 			dir[Left] = platform;
 		}
