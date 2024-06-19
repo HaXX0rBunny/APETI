@@ -1,6 +1,8 @@
 #include "platform.h"
 
-void Initialize_Platform(struct Platform* platform, float x, float y, float w, float h, CP_Color color, int removability, int visibility)
+extern int platformCount;
+
+void Initialize_Platform(struct Platform* platform, float x, float y, float w, float h, CP_Color color, int removability, int exist)
 {
 	platform->Pos.x = x;
 	platform->Pos.y = y;
@@ -11,7 +13,9 @@ void Initialize_Platform(struct Platform* platform, float x, float y, float w, f
 	platform->color = color;
 
 	platform->removability = removability;
-	platform->visibility = visibility;
+	platform->exist = exist;
+	
+	if (exist) platformCount++;
 }
 
 int Platform_MouseIn(struct Platform* platform)

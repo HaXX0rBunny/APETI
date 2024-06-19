@@ -56,7 +56,7 @@ int Save_Level_To_File(char* fileName)
 	{
 		struct Platform platform = platformList[i];
 
-		if (!platform.visibility) continue;
+		if (!platform.exist) continue;
 
 		Save_Platform(&platform, outFile);
 	}
@@ -128,6 +128,8 @@ void Save_Platform(struct Platform* platform, FILE* outFile)
 	Save_Float_To_File(&platform->w, outFile);
 	Save_Float_To_File(&platform->h, outFile);
 
+	Save_Integer_To_File(&platform->removability, outFile);
+
 	Save_Color_To_File(&platform->color, outFile);
 }
 
@@ -138,5 +140,10 @@ void Load_Platform(struct Platform* platform, FILE* inFile)
 	Load_Float_From_File(&platform->w, inFile);
 	Load_Float_From_File(&platform->h, inFile);
 
+	Load_Integer_From_File(&platform->removability, inFile);
+
 	Load_Color_From_File(&platform->color, inFile);
+
+	platform->exist = 1;
+	platformCount++;
 }
