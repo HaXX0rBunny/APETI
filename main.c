@@ -20,6 +20,7 @@ const int window_height = 900;
 
 int main(void)
 {
+
 	CP_System_SetWindowSize(window_width, window_height);
 	CP_Engine_SetNextGameState(game_init, game_update, game_exit);
 	CP_Engine_Run();

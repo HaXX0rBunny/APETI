@@ -2,7 +2,7 @@
 #include "map.h"
 #include "cprocessing.h"
 
-#define MAX_BOMBS 50
+#define MAX_BOMBS 3
 
 typedef struct Bomb {
     CP_Vector Pos;

@@ -3,7 +3,7 @@
 #include "collision.h"  // 충돌 검사 함수가 포함된 헤더 파일
 #include "platform.h" 
 Bullet bullets[MAX_BULLETS];
-
+extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];  // 플랫폼 배열
 void Initialize_Bullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
         bullets[i].active = 0;
@@ -26,7 +26,11 @@ void Bullet_Update() {
         if (bullets[i].active) {
             bullets[i].Pos.x += bullets[i].Velocity.x * dt;
             bullets[i].Pos.y += bullets[i].Velocity.y * dt;
-
+            for (int j = 0; j < MAX_PLATFORM_LIST_SIZE; j++) {
+                if (platformList[j].exist && CollisionIntersection_RectRect(bullets->Pos.x - bullets->radius, bullets->Pos.y - bullets->radius, bullets->radius * 2, bullets->radius * 2, platformList[j].Pos.x, platformList[j].Pos.y, platformList[j].w, platformList[j].h)) {
+                    bullets[i].active = 0;
+                }
+            }
             // 생명 주기 감소
             bullets[i].lifetime -= dt;
             if (bullets[i].lifetime <= 0) {

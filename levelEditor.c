@@ -28,7 +28,7 @@ void Edit_Delete_Platform(void)
 void Edit_Add_Platform(void)
 {
 	static CP_KEY LastKey = KEY_1;
-
+	int removable = 0;
 	if (CP_Input_KeyTriggered(KEY_1))
 		LastKey = KEY_1;
 	if (CP_Input_KeyTriggered(KEY_2))
@@ -84,6 +84,7 @@ void Edit_Add_Platform(void)
 			break;
 		case KEY_8:
 			color = CP_Color_Create(120, 120, 120, 255);
+			removable = 1;
 			break;
 		default:
 			return;
@@ -96,7 +97,7 @@ void Edit_Add_Platform(void)
 			return;
 
 		Initialize_Platform(platform, (float)(gridCoordX * PLATFORM_W), (float)(gridCoordY * PLATFORM_H),
-			(float)PLATFORM_W, (float)PLATFORM_H, color, 0, 1);
+			(float)PLATFORM_W, (float)PLATFORM_H, color, removable, 1);
 	}
 }
 

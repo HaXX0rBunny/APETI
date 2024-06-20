@@ -2,7 +2,7 @@
 
 extern int platformCount;
 
-void Initialize_Platform(struct Platform* platform, float x, float y, float w, float h, CP_Color color, int removability, int exist)
+void Initialize_Platform(struct Platform* platform, float x, float y, float w, float h, CP_Color color, int removability, int exist, int objecType)
 {
 	platform->Pos.x = x;
 	platform->Pos.y = y;
