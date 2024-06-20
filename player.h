@@ -3,6 +3,12 @@
 #include "map.h"
 #include "gravity.h"
 
+enum
+{
+	DASH_SPEED = 2000,
+	MOVE_SPEED = 300,
+};
+
 struct Player
 {
 	int maxHealth;
@@ -17,12 +23,23 @@ struct Player
 
 	int isGrounded;
 
+	int isDash;
+	int isDashCooldown;
+	float dashTimer;
+	float dashCooldown;
+	float maxDashTimer;
+	float maxDashCooldown;
+
+	float SpeedX;
+
 	CP_Color color;
 };
 
 void Player_Init();
 
-void Player_Jump(float initV);
+void Player_Jump();
+void Player_Move();
+void Player_Dash(float t);
 
 void Player_AddHealth(int value);
 void Player_Dead();

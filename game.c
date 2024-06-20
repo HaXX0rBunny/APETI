@@ -1,6 +1,7 @@
 #include "game.h"
 #include "levelEditor.h"
 #include "player.h"
+#include "ui.h"
 
 void Change_Mode(void)
 {
@@ -33,6 +34,9 @@ void game_update(void)
 
 	Player_Update();
 	Player_Draw();
+
+	UI_Health();
+	UI_Dash_Cooldown();
 
 	Draw_AllPlatform();
 }
