@@ -36,7 +36,7 @@ void Bomb_Update() {
 
                 // 플랫폼과 충돌 검사
                 for (int j = 0; j < MAX_PLATFORM_LIST_SIZE; j++) {
-                    if (platformList[j].exist && CollisionIntersection_RectRect(bomb->Pos.x - bomb->radius*2, bomb->Pos.y - bomb->radius, bomb->radius * 2, bomb->radius * 2, platformList[j].Pos.x, platformList[j].Pos.y, platformList[j].w, platformList[j].h)) {
+                    if (platformList[j].exist && CollisionIntersection_RectRect(bomb->Pos.x - bomb->radius, bomb->Pos.y - bomb->radius, bomb->radius * 2, bomb->radius * 2, platformList[j].Pos.x, platformList[j].Pos.y, platformList[j].w, platformList[j].h)) {
                         bomb->exploded = 1;
                         bomb->explodeTimer = 0.7f;  // 1초 후에 터짐
                         

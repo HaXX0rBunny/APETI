@@ -28,7 +28,9 @@ void Edit_Delete_Platform(void)
 void Edit_Add_Platform(void)
 {
 	static CP_KEY LastKey = KEY_1;
-	int removable = 0;
+	int removable = 0;// breakable;
+	int objectype = platform; // platform or enemy
+	int hitcnt = 0;
 	if (CP_Input_KeyTriggered(KEY_1))
 		LastKey = KEY_1;
 	if (CP_Input_KeyTriggered(KEY_2))
@@ -45,6 +47,8 @@ void Edit_Add_Platform(void)
 		LastKey = KEY_7;
 	if (CP_Input_KeyTriggered(KEY_8))
 		LastKey = KEY_8;
+	if (CP_Input_KeyTriggered(KEY_F1))
+		LastKey = KEY_F1;
 
 	int mouseX = (int)floor(CP_Input_GetMouseWorldX());
 	int mouseY = (int)floor(CP_Input_GetMouseWorldY());
@@ -61,6 +65,11 @@ void Edit_Add_Platform(void)
 
 		switch (LastKey)
 		{
+		case KEY_F1:
+			color = CP_Color_Create(225, 25, 125, 255);
+			objectype = enemy;
+			removable = 1;
+			break;
 		case KEY_1:
 			color = CP_Color_Create(0, 0, 0, 255);
 			break;
@@ -97,7 +106,7 @@ void Edit_Add_Platform(void)
 			return;
 
 		Initialize_Platform(platform, (float)(gridCoordX * PLATFORM_W), (float)(gridCoordY * PLATFORM_H),
-			(float)PLATFORM_W, (float)PLATFORM_H, color, removable, 1);
+			(float)PLATFORM_W, (float)PLATFORM_H, color, removable, 1, objectype, hitcnt);
 	}
 }
 

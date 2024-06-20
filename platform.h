@@ -4,7 +4,7 @@
 
 enum {
 	platform = 0,
-	Enemy = 1
+	enemy = 1
 };
 struct Platform
 {
@@ -19,8 +19,9 @@ struct Platform
 	int removability;
 	int exist;
 	int objecType;
+	int hitcount;
 };
 
-void Initialize_Platform(struct Platform* platform, float x, float y, float w, float h, CP_Color color, int removability, int exist);
+void Initialize_Platform(struct Platform* platform, float x, float y, float w, float h, CP_Color color, int removability, int exist, int objecType, int hitcount);
 
 int Platform_MouseIn(struct Platform* platform);
