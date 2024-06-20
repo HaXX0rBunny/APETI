@@ -17,4 +17,3 @@ struct Platform* Platform_Mouse_Collision();
 void level_editor_state_init(void);
 void level_editor_state_update(void);
 void level_editor_state_exit(void);
-
