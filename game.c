@@ -3,6 +3,7 @@
 #include "player.h"
 #include "ui.h"
 #include "demon.h"
+#include "sanic.h"
 
 void Change_Mode(void)
 {
@@ -24,7 +25,9 @@ void game_init(void)
 {
 	Load_Level_From_File("myLevel.lvl");
 	Player_Init();
-	Demon_Init(200, 250, 800, 250, 60, 60, 5, 3);
+
+	//Demon_Init(200, 250, 800, 250, 60, 60, 5, 3);
+	Sanic_Init(200, 250, 60, 60, 5, 3);
 }
 
 void game_update(void)
@@ -37,13 +40,18 @@ void game_update(void)
 	Player_Update();
 	Player_Draw();
 
-	Demon_Update();
-	Demon_Draw();
+	Draw_AllPlatform();
 
+	//Demon_Update();
+	//Demon_Draw();
+
+	Sanic_Update();
+	Sanic_Draw();
+	
 	UI_Health();
 	UI_Dash_Cooldown();
 
-	Draw_AllPlatform();
+	
 }
 
 void game_exit(void)
