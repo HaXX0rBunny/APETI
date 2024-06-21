@@ -3,12 +3,6 @@
 #include "map.h"
 #include "gravity.h"
 
-enum
-{
-	DASH_SPEED = 2000,
-	MOVE_SPEED = 300,
-};
-
 struct Player
 {
 	int maxHealth;
