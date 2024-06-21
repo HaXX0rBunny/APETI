@@ -12,6 +12,7 @@ typedef struct Bomb {
     int active;       // 폭탄의 활성 상태
     int exploded;     // 폭탄이 터졌는지 여부
     float explodeTimer;  // 폭발까지 남은 시간
+    float activationTimer ;
 } Bomb;
 
 extern Bomb bombs[MAX_BOMBS];

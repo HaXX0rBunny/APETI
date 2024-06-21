@@ -28,9 +28,8 @@ void Edit_Delete_Platform(void)
 void Edit_Add_Platform(void)
 {
 	static CP_KEY LastKey = KEY_1;
-	int removable = 0;// breakable;
 	int objectype = platform; // platform or enemy
-	int hitcnt = 0;
+	int removable = 0;
 	if (CP_Input_KeyTriggered(KEY_1))
 		LastKey = KEY_1;
 	if (CP_Input_KeyTriggered(KEY_2))
@@ -106,7 +105,7 @@ void Edit_Add_Platform(void)
 			return;
 
 		Initialize_Platform(platform, (float)(gridCoordX * PLATFORM_W), (float)(gridCoordY * PLATFORM_H),
-			(float)PLATFORM_W, (float)PLATFORM_H, color, removable, 1, objectype, hitcnt);
+			(float)PLATFORM_W, (float)PLATFORM_H, color, removable, 1, objectype, 0);
 	}
 }
 

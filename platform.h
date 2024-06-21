@@ -10,7 +10,7 @@ struct Platform
 {
 
 	CP_Vector Pos;
-
+	CP_Vector velocity;
 	float w;
 	float h;
 
@@ -20,6 +20,7 @@ struct Platform
 	int exist;
 	int objecType;
 	int hitcount;
+
 };
 
 void Initialize_Platform(struct Platform* platform, float x, float y, float w, float h, CP_Color color, int removability, int exist, int objecType, int hitcount);

@@ -1,6 +1,7 @@
 #include "bomb.h"
 #include "platform.h"
 #include "collision.h"
+#include "stdio.h"
 
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];  // 플랫폼 배열
 
@@ -21,6 +22,7 @@ void Bomb_Init(int index, CP_Vector position, CP_Vector velocity, float radius, 
     bombs[index].active = 1;
     bombs[index].exploded = 0;
     bombs[index].explodeTimer = 0;
+    bombs[index].activationTimer = 2.0f;  // 3초 후에 자동으로 터짐
 }
 
 void Bomb_Update() {
@@ -38,12 +40,19 @@ void Bomb_Update() {
                 for (int j = 0; j < MAX_PLATFORM_LIST_SIZE; j++) {
                     if (platformList[j].exist && CollisionIntersection_RectRect(bomb->Pos.x - bomb->radius, bomb->Pos.y - bomb->radius, bomb->radius * 2, bomb->radius * 2, platformList[j].Pos.x, platformList[j].Pos.y, platformList[j].w, platformList[j].h)) {
                         bomb->exploded = 1;
-                        bomb->explodeTimer = 0.7f;  // 1초 후에 터짐
-                        
-                        if(platformList[j].removability==1)
+                        bomb->explodeTimer = 0.7f;  // 0.7초 동안 폭발 효과
+
+                        if (platformList[j].removability == 1)
                             Remove_Platform(&platformList[j]);
                         break;
                     }
+                }
+
+                // 자동 폭발 타이머 업데이트
+                bomb->activationTimer -= dt;
+                if (bomb->activationTimer <= 0) {
+                    bomb->exploded = 1;
+                    bomb->explodeTimer = 0.7f;  // 0.7초 동안 폭발 효과
                 }
             }
             else {
@@ -71,3 +80,4 @@ void Bomb_Draw() {
         }
     }
 }
+

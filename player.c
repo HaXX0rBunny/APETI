@@ -1,9 +1,10 @@
 #include "player.h"
 #include "bomb.h"
+#include <stdio.h>
 #define PLAYER_GFORCE -500.f
 #define MAX_DASH_TIMER 0.15f
 #define MAX_DASH_COOLDOWN 3.f
-
+#define DAMAGE_COOLDOWN_TIME 1.0f  // 1초 쿨다운
 struct Player player;
 
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
@@ -41,7 +42,17 @@ void Player_Init()
 
 	player.color = CP_Color_Create(255, 0, 0, 255);
 }
+void Player_ReduceHealth(int value) {
+	if (player.damageCooldown <= 0.0f&& player.health >=1) {  // 쿨다운 중이 아니면 체력 감소
+		player.health -= value;
+		printf("%d", player.health);
+		player.damageCooldown = DAMAGE_COOLDOWN_TIME;  // 쿨다운 시간 설정
 
+		if (player.health <= 0) {
+			Player_Dead();
+		}
+	}
+}
 void Player_AddHealth(int value)
 {
 	player.health += value;
@@ -164,7 +175,9 @@ void Player_Update()
 	Player_Dash(t);
 	Player_Move();
 	Player_Jump();
-
+	if (player.damageCooldown > 0.0f) {
+		player.damageCooldown -= t;
+	}
 	player.Pos.x += player.Velocity.x * t;
 	player.Pos.y += player.Velocity.y * t;
 
@@ -194,29 +207,37 @@ void Collision_Player_Platform(struct Platform dir[4])
 		float platformY = platform.Pos.y;
 		float platformW = platform.w;
 		float platformH = platform.h;
-
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y, player.w / 3, 1,
 			platformX, platformY, platformW, platformH) && !dir[Up].exist)
 		{
 			dir[Up] = platform;
+			
+			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y + player.h, player.w / 3, 1,
 			platformX, platformY, platformW, platformH) && !dir[Down].exist)
 		{
 			dir[Down] = platform;
+
+			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
+
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x, player.Pos.y, 1, player.h / 3,
 			platformX, platformY, platformW, platformH) && !dir[Right].exist)
 		{
 			dir[Right] = platform;
+
+			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + player.w - 1, player.Pos.y, 1, player.h / 3,
 			platformX, platformY, platformW, platformH) && !dir[Left].exist)
 		{
 			dir[Left] = platform;
+
+			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
 		}
 	}
 }

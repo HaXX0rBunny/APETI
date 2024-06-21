@@ -11,7 +11,7 @@
 //
 // Copyright ?2020 DigiPen, All rights reserved.
 //---------------------------------------------------------
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+//#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 #include "cprocessing.h"
 #include "game.h"
 
