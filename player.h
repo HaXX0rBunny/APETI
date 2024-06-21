@@ -32,7 +32,7 @@ struct Player
     CP_Color color;
     float damageCooldown;
 };
-
+void Player_Heal();
 void Player_Init();
 void Player_Jump();
 void Player_Move();

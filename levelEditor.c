@@ -80,6 +80,8 @@ void Edit_Add_Platform(void)
 			break;
 		case KEY_4:
 			color = CP_Color_Create(0, 0, 255, 255);
+			objectype = heal;
+			removable = 1;
 			break;
 		case KEY_5:
 			color = CP_Color_Create(0, 255, 255, 255);

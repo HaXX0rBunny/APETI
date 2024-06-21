@@ -45,13 +45,19 @@ void Player_Init()
 void Player_ReduceHealth(int value) {
 	if (player.damageCooldown <= 0.0f&& player.health >=1) {  // 쿨다운 중이 아니면 체력 감소
 		player.health -= value;
-		printf("%d", player.health);
+
 		player.damageCooldown = DAMAGE_COOLDOWN_TIME;  // 쿨다운 시간 설정
 
 		if (player.health <= 0) {
 			Player_Dead();
 		}
 	}
+}
+void Player_Heal() {
+	if (player.health >0&& 10>player.health)
+		player.health ++;
+	
+
 }
 void Player_AddHealth(int value)
 {
@@ -120,6 +126,7 @@ void Player_Move()
 	{
 		player.Velocity.x = -player.SpeedX;
 		facingDirection = -1; // Facing left
+
 
 	}
 	if (dir[Right].exist && player.Velocity.x < 0)
@@ -213,6 +220,7 @@ void Collision_Player_Platform(struct Platform dir[4])
 			dir[Up] = platform;
 			
 			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
+			if(platform.objecType == heal) { Player_Heal(); }
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y + player.h, player.w / 3, 1,
@@ -221,7 +229,7 @@ void Collision_Player_Platform(struct Platform dir[4])
 			dir[Down] = platform;
 
 			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
-
+			if (platform.objecType == heal) { Player_Heal(); }
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x, player.Pos.y, 1, player.h / 3,
@@ -230,6 +238,7 @@ void Collision_Player_Platform(struct Platform dir[4])
 			dir[Right] = platform;
 
 			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
+			if (platform.objecType == heal) { Player_Heal(); }
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + player.w - 1, player.Pos.y, 1, player.h / 3,
@@ -238,6 +247,7 @@ void Collision_Player_Platform(struct Platform dir[4])
 			dir[Left] = platform;
 
 			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
+			if (platform.objecType == heal) { Player_Heal(); }
 		}
 	}
 }
