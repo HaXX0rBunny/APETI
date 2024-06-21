@@ -1,8 +1,15 @@
 #include "player.h"
 
-#define PLAYER_GFORCE -500.f
+#define PLAYER_GFORCE -700.f
 #define MAX_DASH_TIMER 0.15f
 #define MAX_DASH_COOLDOWN 3.f
+
+enum
+{
+	DASH_SPEED = 2000,
+	MOVE_SPEED = 300,
+	JUMP_SPEED = 450
+};
 
 struct Player player;
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
@@ -56,7 +63,7 @@ void Player_Jump()
 		{
 			player.isGrounded = 0;
 			player.Pos.y -= 1;
-			player.Velocity.y = -MOVE_SPEED;
+			player.Velocity.y = -JUMP_SPEED;
 		}
 	}
 }
