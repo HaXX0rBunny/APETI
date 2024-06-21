@@ -1,14 +1,16 @@
 #include "player.h"
-
+#include "bomb.h"
 #define PLAYER_GFORCE -500.f
 #define MAX_DASH_TIMER 0.15f
 #define MAX_DASH_COOLDOWN 3.f
 
 struct Player player;
+struct Player player = { 6, 6, 30, 30, {300, 0}, {0, 0}, {0, 0}, 0, {255, 0, 0, 255} };
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
+float direc = 1;
 extern const int window_width;
 extern const int window_height;
-
+float facingDirection = 1;
 void Player_Init()
 {
 	player.health = 9;
@@ -96,9 +98,18 @@ void Player_Move()
 	struct Platform dir[4];
 	Collision_Player_Platform(dir);
 
+	if (CP_Input_KeyTriggered(KEY_L)) {
+		Player_ThrowBomb();
+	}
+	if (CP_Input_KeyTriggered(KEY_K)) {
+		Player_Shoot();
+	}
+	
 	if (CP_Input_KeyDown(KEY_A) && !dir[Right].exist)
 	{
 		player.Velocity.x = -player.SpeedX;
+		facingDirection = -1; // Facing left
+
 	}
 	if (dir[Right].exist && player.Velocity.x < 0)
 	{
@@ -109,6 +120,7 @@ void Player_Move()
 	if (CP_Input_KeyDown(KEY_D) && !dir[Left].exist)
 	{
 		player.Velocity.x = player.SpeedX;
+		facingDirection = 1;
 	}
 	if (dir[Left].exist && player.Velocity.x > 0)
 	{
@@ -205,6 +217,29 @@ void Collision_Player_Platform(struct Platform dir[4])
 			platformX, platformY, platformW, platformH) && !dir[Left].exist)
 		{
 			dir[Left] = platform;
+		}
+	}
+}
+
+void Player_Shoot() {
+	CP_Vector bulletVelocity = { 1500*direc, 0 }; // 오른쪽으로 300의 속도
+
+	for (int i = 0; i < MAX_BULLETS; i++) {
+		if (!bullets[i].active) {
+			Bullet_Init(i, player.Pos, bulletVelocity, 5, CP_Color_Create(255, 255, 0, 255));
+			break;
+		}
+	}
+}
+
+void Player_ThrowBomb() {
+	float initialSpeed = 200.0f;
+	CP_Vector bombVelocity = { initialSpeed * direc, -initialSpeed };  // 포물선을 그리도록 초기 속도 설정
+
+	for (int i = 0; i < MAX_BOMBS; i++) {
+		if (!bombs[i].active) {
+			Bomb_Init(i, player.Pos, bombVelocity, 10, CP_Color_Create(255, 0, 0, 255));
+			return;
 		}
 	}
 }

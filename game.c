@@ -34,14 +34,21 @@ void game_update(void)
 
 	Player_Update();
 	Player_Draw();
+	Bullet_Update();
+	Bullet_Draw();
+	Bomb_Update();
+	Bomb_Draw();
 
 	UI_Health();
 	UI_Dash_Cooldown();
 
+	UI_Health();
+	UI_Dash_Cooldown();
 	Draw_AllPlatform();
 }
 
 void game_exit(void)
 {
+	
 	Clear_Map();
 }
