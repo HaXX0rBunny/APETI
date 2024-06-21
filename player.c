@@ -5,9 +5,9 @@
 #define MAX_DASH_COOLDOWN 3.f
 
 struct Player player;
-struct Player player = { 6, 6, 30, 30, {300, 0}, {0, 0}, {0, 0}, 0, {255, 0, 0, 255} };
+
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
-float direc = 1;
+
 extern const int window_width;
 extern const int window_height;
 float facingDirection = 1;
@@ -222,7 +222,7 @@ void Collision_Player_Platform(struct Platform dir[4])
 }
 
 void Player_Shoot() {
-	CP_Vector bulletVelocity = { 1500*direc, 0 }; // 오른쪽으로 300의 속도
+	CP_Vector bulletVelocity = { 1500*facingDirection, 0 }; // 오른쪽으로 300의 속도
 
 	for (int i = 0; i < MAX_BULLETS; i++) {
 		if (!bullets[i].active) {
@@ -234,7 +234,7 @@ void Player_Shoot() {
 
 void Player_ThrowBomb() {
 	float initialSpeed = 200.0f;
-	CP_Vector bombVelocity = { initialSpeed * direc, -initialSpeed };  // 포물선을 그리도록 초기 속도 설정
+	CP_Vector bombVelocity = { initialSpeed * facingDirection, -initialSpeed };  // 포물선을 그리도록 초기 속도 설정
 
 	for (int i = 0; i < MAX_BOMBS; i++) {
 		if (!bombs[i].active) {
