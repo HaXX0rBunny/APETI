@@ -29,6 +29,7 @@
     <ClCompile Include="map.c" />
     <ClCompile Include="platform.c" />
     <ClCompile Include="player.c" />
+    <ClCompile Include="sanic.c" />
     <ClCompile Include="ui.c" />
     <ClCompile Include="demon.c" />
   </ItemGroup>
@@ -42,6 +43,7 @@
     <ClInclude Include="map.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="sanic.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="demon.h" />
   </ItemGroup>
