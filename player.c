@@ -12,13 +12,15 @@ extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
 extern const int window_width;
 extern const int window_height;
 float facingDirection = 1;
+int player_insX = 300;
+int player_insY = 0;
 void Player_Init()
 {
 	player.health = 9;
 	player.maxHealth = 10;
 
-	player.Pos.x = 300;
-	player.Pos.y = 0;
+	player.Pos.x = player_insX;
+	player.Pos.y = player_insY;
 
 	player.w = 30;
 	player.h = 30;
@@ -220,7 +222,9 @@ void Collision_Player_Platform(struct Platform dir[4])
 			dir[Up] = platform;
 			
 			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
-			if(platform.objecType == heal) { Player_Heal(); }
+			if(platform.objecType == heal|| platform.objecType == door) { Player_Heal();
+			Remove_Platform(&platformList[i]);
+			}
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y + player.h, player.w / 3, 1,
@@ -229,7 +233,10 @@ void Collision_Player_Platform(struct Platform dir[4])
 			dir[Down] = platform;
 
 			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
-			if (platform.objecType == heal) { Player_Heal(); }
+			if (platform.objecType == heal|| platform.objecType == door) {
+				Player_Heal();
+				Remove_Platform(&platformList[i]);
+			}
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x, player.Pos.y, 1, player.h / 3,
@@ -238,7 +245,10 @@ void Collision_Player_Platform(struct Platform dir[4])
 			dir[Right] = platform;
 
 			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
-			if (platform.objecType == heal) { Player_Heal(); }
+			if (platform.objecType == heal|| platform.objecType == door) {
+				Player_Heal();
+				Remove_Platform(&platformList[i]);
+			}
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + player.w - 1, player.Pos.y, 1, player.h / 3,
@@ -247,7 +257,10 @@ void Collision_Player_Platform(struct Platform dir[4])
 			dir[Left] = platform;
 
 			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
-			if (platform.objecType == heal) { Player_Heal(); }
+			if (platform.objecType == heal|| platform.objecType == door) {
+				Player_Heal();
+				Remove_Platform(&platformList[i]);
+			}
 		}
 	}
 }

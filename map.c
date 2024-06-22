@@ -11,7 +11,7 @@ void Draw_AllPlatform()
 	for (i = 0; i < MAX_PLATFORM_LIST_SIZE; i++)
 	{
 		if (platformList[i].exist == 0) continue;
-
+		
 		CP_Settings_Fill(platformList[i].color);
 		CP_Graphics_DrawRect(platformList[i].Pos.x, platformList[i].Pos.y,
 			platformList[i].w, platformList[i].h);

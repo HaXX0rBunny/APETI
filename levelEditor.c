@@ -30,6 +30,8 @@ void Edit_Add_Platform(void)
 	static CP_KEY LastKey = KEY_1;
 	int objectype = platform; // platform or enemy
 	int removable = 0;
+	int movespeed = 0;
+	int exist = 1;
 	if (CP_Input_KeyTriggered(KEY_1))
 		LastKey = KEY_1;
 	if (CP_Input_KeyTriggered(KEY_2))
@@ -68,6 +70,7 @@ void Edit_Add_Platform(void)
 			color = CP_Color_Create(225, 25, 125, 255);
 			objectype = enemy;
 			removable = 1;
+			movespeed = 2;
 			break;
 		case KEY_1:
 			color = CP_Color_Create(0, 0, 0, 255);
@@ -77,6 +80,8 @@ void Edit_Add_Platform(void)
 			break;
 		case KEY_3:
 			color = CP_Color_Create(0, 255, 0, 255);
+			removable = 1;
+			objectype = door;
 			break;
 		case KEY_4:
 			color = CP_Color_Create(0, 0, 255, 255);
@@ -88,6 +93,8 @@ void Edit_Add_Platform(void)
 			break;
 		case KEY_6:
 			color = CP_Color_Create(255, 0, 255, 255);
+			objectype = heal;
+			removable = 1;
 			break;
 		case KEY_7:
 			color = CP_Color_Create(255, 255, 0, 255);
@@ -107,7 +114,7 @@ void Edit_Add_Platform(void)
 			return;
 
 		Initialize_Platform(platform, (float)(gridCoordX * PLATFORM_W), (float)(gridCoordY * PLATFORM_H),
-			(float)PLATFORM_W, (float)PLATFORM_H, color, removable, 1, objectype, 0);
+			(float)PLATFORM_W, (float)PLATFORM_H, color, removable, exist, objectype, 0, movespeed);
 	}
 }
 

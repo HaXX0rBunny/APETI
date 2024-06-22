@@ -1,5 +1,8 @@
-#pragma once
-
+#ifndef ENEMYAI_H
+#define ENEMYAI_H
+#include "map.h"
 #include "platform.h"
 
-void Enemy_Patrol(struct Platform* enemy);
+void updateEnemies();
+
+#endif

@@ -2,7 +2,7 @@
 #include "levelEditor.h"
 #include "player.h"
 #include "ui.h"
-
+#include "enemyAi.h"
 void Change_Mode(void)
 {
 	if (CP_Input_KeyTriggered(KEY_INSERT))
@@ -31,7 +31,7 @@ void game_update(void)
 
 	Change_Mode();
 	Reset_Player();
-
+	updateEnemies();
 	Player_Update();
 	Player_Draw();
 	Bullet_Update();

@@ -2,7 +2,7 @@
 
 extern int platformCount;
 
-void Initialize_Platform(struct Platform* platform, float x, float y, float w, float h, CP_Color color, int removability, int exist, int objecType, int hitcount)
+void Initialize_Platform(struct Platform* platform, float x, float y, float w, float h, CP_Color color, int removability, int exist, int objecType, int hitcount,int moveSpeed)
 {
 	platform->Pos.x = x;
 	platform->Pos.y = y;
@@ -17,6 +17,7 @@ void Initialize_Platform(struct Platform* platform, float x, float y, float w, f
 	platform->hitcount = hitcount;
 	platform->objecType = objecType;
 	platform->velocity = CP_Vector_Set(0, 0);
+	platform->moveSpeed = moveSpeed;
 	if (exist) platformCount++;
 }
 
