@@ -4,11 +4,11 @@
 
 #define BLUE CP_Color_Create(0, 0, 255, 255)
 #define RED CP_Color_Create(255, 0, 0, 255)
-#define DISTANCE_PADDING 0.f
-#define RADIUS 30.f
-#define MOVE_SPEED 10.f
-#define MOVE_SPEED_LIMIT 500.f
-#define MOVE_SPEED_UNDER 50.f
+#define ACCELERATION_SPEED 10.f
+#define MOVE_SPEED_LIMIT 1000.f
+#define VELOCITY_LIMIT 50.f
+#define TWINKLE_SPEED 2.f
+#define MAX_STUN_TIMER 5.f
 
 struct Sanic sanic;
 extern struct Player player;
@@ -30,87 +30,120 @@ void Sanic_Init(float x, float y, float w, float h, int health, int damage)
 	sanic.acceleration.x = 0;
 	sanic.acceleration.y = 0;
 
-	sanic.state = 0;
+	sanic.state = 1;
 
-	sanic.des = Sanic_Init_Chasing_Des();
+	sanic.color = BLUE;
 }
 
-CP_Vector Sanic_Init_Chasing_Des()
+void Sanic_Init_Des()
 {
-	CP_Vector vec = { 0, 0 };
+	int r = CP_Random_RangeInt(1, 3);
 
-	float disX = player.Pos.x - sanic.pos.x;
-	float disY = player.Pos.y - sanic.pos.y;
-
-	vec.x = player.Pos.x + (disX * DISTANCE_PADDING);
-	vec.y = player.Pos.y + (disY * DISTANCE_PADDING);
-
-	return vec;
+	if (r == 1) 
+	{
+		sanic.des.x = player.Pos.x + ((player.Pos.x - sanic.pos.x) * -0.8f);
+		sanic.des.y = player.Pos.y + (player.Pos.y - sanic.pos.y);
+	}
+	else
+	{
+		sanic.des.x = player.Pos.x + ((player.Pos.x - sanic.pos.x) * CP_Random_RangeFloat(-0.1f, 0.5f));
+		sanic.des.y = player.Pos.y + ((player.Pos.y - sanic.pos.y) * CP_Random_RangeFloat(-0.1f, 0.5f));
+	}
 }
 
-CP_Vector Sanic_Init_Starting_Des()
+void Sanic_Move()
 {
-	CP_Vector vec = { 0, 0 };
-	
-	vec.x = CP_Random_RangeFloat(sanic.pos.x - RADIUS, sanic.pos.x + RADIUS);
+	float t = CP_System_GetDt();
 
-	float disX = player.Pos.x - vec.x;
+	if ((sanic.velocity.x < VELOCITY_LIMIT && sanic.velocity.x > -VELOCITY_LIMIT) 
+		|| (sanic.velocity.y < VELOCITY_LIMIT && sanic.velocity.y > -VELOCITY_LIMIT))
+		Sanic_Init_Des();
 
-	vec.y = sqrtf((RADIUS * RADIUS) - (disX * disX));
-
-	return vec;
-}
-
-int Sanic_Move_To_Des()
-{
-	float accX = (sanic.des.x - sanic.pos.x) * MOVE_SPEED;
-	float accY = (sanic.des.y - sanic.pos.y) * MOVE_SPEED;
-
-	if (accX > MOVE_SPEED_LIMIT) accX = MOVE_SPEED_LIMIT;
-	if (accX < -MOVE_SPEED_LIMIT) accX = -MOVE_SPEED_LIMIT;
-	if (accX < MOVE_SPEED_UNDER && accX > -MOVE_SPEED_UNDER) accX = MOVE_SPEED_UNDER;
-
-	if (accY > MOVE_SPEED_LIMIT) accY = MOVE_SPEED_LIMIT;
-	if (accY < -MOVE_SPEED_LIMIT) accY = -MOVE_SPEED_LIMIT;
-	if (accY < MOVE_SPEED_UNDER && accY > -MOVE_SPEED_UNDER) accY = MOVE_SPEED_UNDER;
+	float accX = (sanic.des.x - sanic.pos.x) * ACCELERATION_SPEED;
+	float accY = (sanic.des.y - sanic.pos.y) * ACCELERATION_SPEED;
 
 	sanic.acceleration.x = accX;
 	sanic.acceleration.y = accY;
 
-	if (fabsf(sanic.pos.x - sanic.des.x) < 5.f) return 1;
-
-	return 0;
-}
-
-int Sanic_Move_To_Des_Resist()
-{
-	sanic.acceleration.x = 10;
-	sanic.acceleration.y = 10;
-
-	if (fabsf(sanic.pos.x - sanic.des.x) < 5.f) return 1;
-
-	return 0;
-}
-
-void Sanic_Draw()
-{
-	CP_Settings_Fill(BLUE);
-	CP_Graphics_DrawRect(sanic.pos.x, sanic.pos.y, sanic.w, sanic.h);
-
-	CP_Settings_Fill(RED);
-	CP_Graphics_DrawRect(sanic.des.x, sanic.des.y, 10, 10);
-}
-
-void Sanic_Update()
-{
-	float t = CP_System_GetDt();
-
-	sanic.des = Sanic_Init_Chasing_Des();
-	Sanic_Move_To_Des();
+	if (sanic.velocity.x > MOVE_SPEED_LIMIT) sanic.velocity.x = MOVE_SPEED_LIMIT;
+	if (sanic.velocity.y > MOVE_SPEED_LIMIT) sanic.velocity.y = MOVE_SPEED_LIMIT;
+	if (sanic.velocity.x < -MOVE_SPEED_LIMIT) sanic.velocity.x = -MOVE_SPEED_LIMIT;
+	if (sanic.velocity.y < -MOVE_SPEED_LIMIT) sanic.velocity.y = -MOVE_SPEED_LIMIT;
 
 	sanic.velocity.x += sanic.acceleration.x * t;
 	sanic.velocity.y += sanic.acceleration.y * t;
 
 	sanic.pos.x += sanic.velocity.x * t;
 	sanic.pos.y += sanic.velocity.y * t;
+}
+
+void Sanic_Attack()
+{
+
+}
+
+int Sanic_Hit()
+{
+	
+	return 0;
+}
+
+int Sanic_Stun()
+{
+	static float rot_counter = 0;
+	static float stunTimer = 0;
+
+	float t = CP_System_GetDt();
+
+	rot_counter += rot_counter >= 1.0f ? -1.f : t * TWINKLE_SPEED;
+	sanic.color = CP_Color_Lerp(BLUE, RED, rot_counter);
+
+	stunTimer += t;
+
+	if (stunTimer > MAX_STUN_TIMER)
+	{
+		sanic.color = BLUE;
+		stunTimer = 0;
+		return 1;
+	}
+	
+	return 0;
+}
+
+void Sanic_Draw()
+{
+	CP_Color color = sanic.color;
+
+	int i = 1;
+	for (i = 5; i >= 1; i--)
+	{
+		color.a = (unsigned char)(200 / i);
+		CP_Settings_Fill(color);
+		CP_Graphics_DrawRect(sanic.pos.x + (-sanic.velocity.x * 0.03f * i), sanic.pos.y + (-sanic.velocity.y * 0.03f * i),
+							 sanic.w * (1 - (0.05f * i)), sanic.h * (1 - (0.05f * i)));
+	}
+
+	CP_Settings_Fill(sanic.color);
+	CP_Graphics_DrawRect(sanic.pos.x, sanic.pos.y, sanic.w, sanic.h);
+}
+
+void Sanic_Update()
+{
+	switch (sanic.state)
+	{
+	case 0:
+		Sanic_Move();
+		Sanic_Attack();
+		if (Sanic_Hit())
+		{
+			sanic.state = 1;
+		}
+		break;
+	case 1:
+		if (Sanic_Stun())
+		{
+			sanic.state = 0;
+		}
+		break;
+	}
 }

@@ -27,7 +27,7 @@ void game_init(void)
 	Player_Init();
 
 	//Demon_Init(200, 250, 800, 250, 60, 60, 5, 3);
-	Sanic_Init(200, 250, 60, 60, 5, 3);
+	Sanic_Init(300, 300, 60, 60, 5, 3);
 }
 
 void game_update(void)
