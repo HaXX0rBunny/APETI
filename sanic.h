@@ -16,15 +16,18 @@ struct Sanic
 	CP_Vector velocity;
 	CP_Vector acceleration;
 	CP_Vector des;
+
+	CP_Color color;
 };
 
 void Sanic_Init(float x, float y, float w, float h, int health, int damage);
 
-CP_Vector Sanic_Init_Chasing_Des();
-CP_Vector Sanic_Init_Starting_Des();
+void Sanic_Init_Des();
+void Sanic_Move();
+void Sanic_Attack();
 
-int Sanic_Move_To_Des();
-int Sanic_Move_To_Des_Resist();
+int Sanic_Hit();
+int Sanic_Stun();
 
 void Sanic_Draw();
 void Sanic_Update();
