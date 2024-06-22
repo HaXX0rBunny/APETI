@@ -4,6 +4,7 @@
 #include "ui.h"
 #include "demon.h"
 #include "sanic.h"
+#include "wof.h"
 
 void Change_Mode(void)
 {
@@ -27,7 +28,8 @@ void game_init(void)
 	Player_Init();
 
 	//Demon_Init(200, 250, 800, 250, 60, 60, 5, 3);
-	Sanic_Init(300, 300, 60, 60, 5, 3);
+	//Sanic_Init(300, 300, 60, 60, 5, 3);
+	Wof_Init(1500, 0, 200, 1000, 6, 3);
 }
 
 void game_update(void)
@@ -45,13 +47,14 @@ void game_update(void)
 	//Demon_Update();
 	//Demon_Draw();
 
-	Sanic_Update();
-	Sanic_Draw();
+	//Sanic_Update();
+	//Sanic_Draw();
+
+	Wof_Draw();
+	Wof_Update();
 	
 	UI_Health();
 	UI_Dash_Cooldown();
-
-	
 }
 
 void game_exit(void)

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="camera.c" />
     <ClCompile Include="collision.c" />
+    <ClCompile Include="dashEffect.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="gravity.c" />
     <ClCompile Include="levelEditor.c" />
@@ -32,10 +33,12 @@
     <ClCompile Include="sanic.c" />
     <ClCompile Include="ui.c" />
     <ClCompile Include="demon.c" />
+    <ClCompile Include="wof.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
+    <ClInclude Include="dashEffect.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gravity.h" />
     <ClInclude Include="levelEditor.h" />
@@ -46,6 +49,7 @@
     <ClInclude Include="sanic.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="demon.h" />
+    <ClInclude Include="wof.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
