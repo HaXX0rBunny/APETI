@@ -1,4 +1,7 @@
 #include "player.h"
+#include "bomb.h"
+#include <stdio.h>
+#define PLAYER_GFORCE -500.f
 
 #define PLAYER_GFORCE -700.f
 #define MAX_DASH_TIMER 0.15f
@@ -11,11 +14,14 @@ enum
 	JUMP_SPEED = 450
 };
 
+#define DAMAGE_COOLDOWN_TIME 1.0f  // 1초 쿨다운
 struct Player player;
+
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
+
 extern const int window_width;
 extern const int window_height;
-
+float facingDirection = 1;
 void Player_Init()
 {
 	player.health = 9;
@@ -46,7 +52,23 @@ void Player_Init()
 
 	player.color = CP_Color_Create(255, 0, 0, 255);
 }
+void Player_ReduceHealth(int value) {
+	if (player.damageCooldown <= 0.0f&& player.health >=1) {  // 쿨다운 중이 아니면 체력 감소
+		player.health -= value;
 
+		player.damageCooldown = DAMAGE_COOLDOWN_TIME;  // 쿨다운 시간 설정
+
+		if (player.health <= 0) {
+			Player_Dead();
+		}
+	}
+}
+void Player_Heal() {
+	if (player.health >0&& 10>player.health)
+		player.health ++;
+	
+
+}
 void Player_AddHealth(int value)
 {
 	player.health += value;
@@ -103,9 +125,19 @@ void Player_Move()
 	struct Platform dir[4];
 	Collision_Player_Platform(dir);
 
+	if (CP_Input_KeyTriggered(KEY_L)) {
+		Player_ThrowBomb();
+	}
+	if (CP_Input_KeyTriggered(KEY_K)) {
+		Player_Shoot();
+	}
+	
 	if (CP_Input_KeyDown(KEY_A) && !dir[Right].exist)
 	{
 		player.Velocity.x = -player.SpeedX;
+		facingDirection = -1; // Facing left
+
+
 	}
 	if (dir[Right].exist && player.Velocity.x < 0)
 	{
@@ -116,6 +148,7 @@ void Player_Move()
 	if (CP_Input_KeyDown(KEY_D) && !dir[Left].exist)
 	{
 		player.Velocity.x = player.SpeedX;
+		facingDirection = 1;
 	}
 	if (dir[Left].exist && player.Velocity.x > 0)
 	{
@@ -159,7 +192,9 @@ void Player_Update()
 	Player_Dash(t);
 	Player_Move();
 	Player_Jump();
-
+	if (player.damageCooldown > 0.0f) {
+		player.damageCooldown -= t;
+	}
 	player.Pos.x += player.Velocity.x * t;
 	player.Pos.y += player.Velocity.y * t;
 
@@ -189,29 +224,63 @@ void Collision_Player_Platform(struct Platform dir[4])
 		float platformY = platform.Pos.y;
 		float platformW = platform.w;
 		float platformH = platform.h;
-
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y, player.w / 3, 1,
 			platformX, platformY, platformW, platformH) && !dir[Up].exist)
 		{
 			dir[Up] = platform;
+			
+			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
+			if(platform.objecType == heal) { Player_Heal(); }
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y + player.h, player.w / 3, 1,
 			platformX, platformY, platformW, platformH) && !dir[Down].exist)
 		{
 			dir[Down] = platform;
+
+			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
+			if (platform.objecType == heal) { Player_Heal(); }
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x, player.Pos.y, 1, player.h / 3,
 			platformX, platformY, platformW, platformH) && !dir[Right].exist)
 		{
 			dir[Right] = platform;
+
+			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
+			if (platform.objecType == heal) { Player_Heal(); }
 		}
 
 		if (CollisionIntersection_RectRect(player.Pos.x + player.w - 1, player.Pos.y, 1, player.h / 3,
 			platformX, platformY, platformW, platformH) && !dir[Left].exist)
 		{
 			dir[Left] = platform;
+
+			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
+			if (platform.objecType == heal) { Player_Heal(); }
+		}
+	}
+}
+
+void Player_Shoot() {
+	CP_Vector bulletVelocity = { 1500*facingDirection, 0 }; // 오른쪽으로 300의 속도
+
+	for (int i = 0; i < MAX_BULLETS; i++) {
+		if (!bullets[i].active) {
+			Bullet_Init(i, player.Pos, bulletVelocity, 5, CP_Color_Create(255, 255, 0, 255));
+			break;
+		}
+	}
+}
+
+void Player_ThrowBomb() {
+	float initialSpeed = 200.0f;
+	CP_Vector bombVelocity = { initialSpeed * facingDirection, -initialSpeed };  // 포물선을 그리도록 초기 속도 설정
+
+	for (int i = 0; i < MAX_BOMBS; i++) {
+		if (!bombs[i].active) {
+			Bomb_Init(i, player.Pos, bombVelocity, 10, CP_Color_Create(255, 0, 0, 255));
+			return;
 		}
 	}
 }

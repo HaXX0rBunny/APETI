@@ -1,6 +1,6 @@
 #include "map.h"
 
-struct Platform platformList[MAX_PLATFORM_LIST_SIZE] = { { 0, 0, 0, 0, {0, 0, 0, 0}, 0, 0} };
+struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
 int platformCount = 0;
 
 extern struct Camera camera;

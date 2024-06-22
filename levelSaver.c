@@ -130,6 +130,8 @@ void Save_Platform(struct Platform* platform, FILE* outFile)
 
 	Save_Integer_To_File(&platform->removability, outFile);
 
+	Save_Integer_To_File(&platform->objecType, outFile);
+
 	Save_Color_To_File(&platform->color, outFile);
 }
 
@@ -141,7 +143,7 @@ void Load_Platform(struct Platform* platform, FILE* inFile)
 	Load_Float_From_File(&platform->h, inFile);
 
 	Load_Integer_From_File(&platform->removability, inFile);
-
+	Load_Integer_From_File(&platform->objecType, inFile);
 	Load_Color_From_File(&platform->color, inFile);
 
 	platform->exist = 1;
