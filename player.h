@@ -6,11 +6,6 @@
 #include "bomb.h"
 #include "collision.h"
 #include "platform.h"
-enum
-{
-    DASH_SPEED = 2000,
-    MOVE_SPEED = 300,
-};
 
 struct Player
 {

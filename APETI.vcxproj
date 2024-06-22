@@ -34,7 +34,9 @@
     </ClCompile>
     <ClCompile Include="platform.c" />
     <ClCompile Include="player.c" />
+    <ClCompile Include="sanic.c" />
     <ClCompile Include="ui.c" />
+    <ClCompile Include="demon.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bomb.h" />
@@ -51,7 +53,9 @@
     <ClInclude Include="map.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="sanic.h" />
     <ClInclude Include="ui.h" />
+    <ClInclude Include="demon.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

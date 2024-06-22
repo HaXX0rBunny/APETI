@@ -2,8 +2,18 @@
 #include "bomb.h"
 #include <stdio.h>
 #define PLAYER_GFORCE -500.f
+
+
 #define MAX_DASH_TIMER 0.15f
 #define MAX_DASH_COOLDOWN 3.f
+
+enum
+{
+	DASH_SPEED = 2000,
+	MOVE_SPEED = 300,
+	JUMP_SPEED = 450
+};
+
 #define DAMAGE_COOLDOWN_TIME 1.0f  // 1ÃÊ Äð´Ù¿î
 struct Player player;
 
@@ -77,7 +87,7 @@ void Player_Jump()
 		{
 			player.isGrounded = 0;
 			player.Pos.y -= 1;
-			player.Velocity.y = -MOVE_SPEED;
+			player.Velocity.y = -JUMP_SPEED;
 		}
 	}
 }

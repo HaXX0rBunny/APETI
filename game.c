@@ -3,6 +3,9 @@
 #include "player.h"
 #include "ui.h"
 #include "enemyAi.h"
+#include "demon.h"
+#include "sanic.h"
+
 void Change_Mode(void)
 {
 	if (CP_Input_KeyTriggered(KEY_INSERT))
@@ -23,6 +26,9 @@ void game_init(void)
 {
 	Load_Level_From_File("myLevel.lvl");
 	Player_Init();
+
+	//Demon_Init(200, 250, 800, 250, 60, 60, 5, 3);
+	Sanic_Init(300, 300, 60, 60, 5, 3);
 }
 
 void game_update(void)
@@ -39,6 +45,14 @@ void game_update(void)
 	Bomb_Update();
 	Bomb_Draw();
 
+	Draw_AllPlatform();
+
+	//Demon_Update();
+	//Demon_Draw();
+
+	Sanic_Update();
+	Sanic_Draw();
+	
 	UI_Health();
 	UI_Dash_Cooldown();
 
@@ -49,6 +63,6 @@ void game_update(void)
 
 void game_exit(void)
 {
-	
+	Save_Level_To_File("myLevel.lvl");
 	Clear_Map();
 }
