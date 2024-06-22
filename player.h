@@ -6,7 +6,6 @@
 #include "bomb.h"
 #include "collision.h"
 #include "platform.h"
-enum
 
 struct Player
 {

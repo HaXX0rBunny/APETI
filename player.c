@@ -3,7 +3,7 @@
 #include <stdio.h>
 #define PLAYER_GFORCE -500.f
 
-#define PLAYER_GFORCE -700.f
+
 #define MAX_DASH_TIMER 0.15f
 #define MAX_DASH_COOLDOWN 3.f
 
