@@ -12,8 +12,8 @@ extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
 extern const int window_width;
 extern const int window_height;
 float facingDirection = 1;
-int player_insX = 300;
-int player_insY = 0;
+float player_insX = 300;
+float player_insY = 0;
 void Player_Init()
 {
 	player.health = 9;
