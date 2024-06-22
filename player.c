@@ -1,4 +1,5 @@
 #include "player.h"
+#include "dashEffect.h"
 
 #define PLAYER_GFORCE -700.f
 #define MAX_DASH_TIMER 0.15f
@@ -168,6 +169,9 @@ void Player_Update()
 
 void Player_Draw()
 {
+	if (player.isDash) 
+		Dash_Effect(player.color, &player.Pos, &player.Velocity, player.w, player.h, 3, 0.015f);
+
 	CP_Settings_Fill(player.color);
 	CP_Graphics_DrawRect(player.Pos.x, player.Pos.y, player.w, player.h);
 }

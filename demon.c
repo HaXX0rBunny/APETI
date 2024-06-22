@@ -45,7 +45,7 @@ void Body_Draw(struct Body* body)
 int Body_Attack(struct Body* body)
 {
 	static float rot_counter = 0;
-	rot_counter += rot_counter >= 1.0f ? -1.f : CP_System_GetDt() * ATTACK_SPEED;
+	rot_counter += CP_System_GetDt() * ATTACK_SPEED;
 
 	if (fabsf(body->pos.x - body->end.x) > 0.5f)
 	{
@@ -57,6 +57,7 @@ int Body_Attack(struct Body* body)
 	}
 	else
 	{
+		rot_counter = 0;
 		body->pos = body->end;
 		body->end = body->start;
 		body->start = body->pos;
@@ -88,7 +89,7 @@ void Demon_Init(float x, float y, float desX, float desY, float w, float h, int 
 int Demon_Summon()
 {
 	static float rot_counter = 0;
-	rot_counter += rot_counter >= 1.0f ? -1.f : CP_System_GetDt() * SUMMON_SPEED;
+	rot_counter += CP_System_GetDt() * SUMMON_SPEED;
 
 	static int alpha;
 	alpha = CP_Math_LerpInt(0, 255, rot_counter);
@@ -100,7 +101,12 @@ int Demon_Summon()
 		demon.body[i].color.a = (unsigned char)alpha;
 	}
 
-	if (alpha == 255) return 1;
+	if (alpha == 255)
+	{
+		rot_counter = 0;
+		return 1;
+	}
+		
 	return 0;
 }
 

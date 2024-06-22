@@ -1,5 +1,6 @@
 #include "sanic.h"
 #include "player.h"
+#include "dashEffect.h"
 #include <math.h>
 
 #define BLUE CP_Color_Create(0, 0, 255, 255)
@@ -112,17 +113,7 @@ int Sanic_Stun()
 
 void Sanic_Draw()
 {
-	CP_Color color = sanic.color;
-
-	int i = 1;
-	for (i = 5; i >= 1; i--)
-	{
-		color.a = (unsigned char)(200 / i);
-		CP_Settings_Fill(color);
-		CP_Graphics_DrawRect(sanic.pos.x + (-sanic.velocity.x * 0.03f * i), sanic.pos.y + (-sanic.velocity.y * 0.03f * i),
-							 sanic.w * (1 - (0.05f * i)), sanic.h * (1 - (0.05f * i)));
-	}
-
+	Dash_Effect(sanic.color, &sanic.pos, &sanic.velocity, sanic.w, sanic.h, 5, 0.03f);
 	CP_Settings_Fill(sanic.color);
 	CP_Graphics_DrawRect(sanic.pos.x, sanic.pos.y, sanic.w, sanic.h);
 }
