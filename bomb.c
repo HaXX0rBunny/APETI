@@ -1,9 +1,11 @@
 #include "bomb.h"
 #include "platform.h"
 #include "collision.h"
+#include "sanic.h"  // Sanic 구조체를 포함하기 위해 추가
 #include "stdio.h"
 
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];  // 플랫폼 배열
+extern struct Sanic sanic;  // 외부에서 선언된 Sanic 사용
 
 Bomb bombs[MAX_BOMBS];
 
@@ -48,6 +50,13 @@ void Bomb_Update() {
                     }
                 }
 
+                // Sanic과 충돌 검사
+                if (sanic.active && CollisionIntersection_RectRect(bomb->Pos.x - bomb->radius, bomb->Pos.y - bomb->radius, bomb->radius * 2, bomb->radius * 2, sanic.pos.x, sanic.pos.y, sanic.w, sanic.h)) {
+                    bomb->exploded = 1;
+                    bomb->explodeTimer = 0.7f;  // 0.7초 동안 폭발 효과
+                    sanic.state = 1;  // Sanic 상태 변경
+                }
+
                 // 자동 폭발 타이머 업데이트
                 bomb->activationTimer -= dt;
                 if (bomb->activationTimer <= 0) {
@@ -80,4 +89,3 @@ void Bomb_Draw() {
         }
     }
 }
-
