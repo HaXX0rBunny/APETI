@@ -28,9 +28,9 @@ void game_init(void)
 	Load_Level_From_File("myLevel.lvl");
 	Player_Init();
 
-	//Demon_Init(200, 250, 800, 250, 60, 60, 5, 3);
+	//Demon_Init(-500, -140, 400, -140, 60, 60, 5, 3);
 	//Sanic_Init(300, 300, 60, 60, 5, 3);
-	Wof_Init(1500, 0, 200, 1000, 6, 3);
+	Wof_Init(1500, 0, 200, 1000, 10, 3);
 }
 
 void game_update(void)
@@ -68,6 +68,6 @@ void game_update(void)
 
 void game_exit(void)
 {
-	Save_Level_To_File("myLevel.lvl");
+	//Save_Level_To_File("myLevel.lvl");
 	Clear_Map();
 }

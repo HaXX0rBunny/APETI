@@ -28,7 +28,7 @@ struct Demon
 {
 	int health;
 	int damage;
-
+	float hitCooldown;
 	struct Body body[BODY_COL * BODY_ROW];
 
 	int eye;

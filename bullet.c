@@ -3,12 +3,16 @@
 #include "collision.h"  
 #include "platform.h" 
 #include "sanic.h"
+#include "demon.h" 
+#include "wof.h"  // WOF 구조체와 관련 함수를 포함하기 위해 추가
 #include <stdio.h>
 extern struct Sanic sanic;
-
+extern struct Demon demon;
 Bullet bullets[MAX_BULLETS];
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];  // 플랫폼 배열
 
+
+extern struct Wof wof;  // 외부에서 선언된 WOF 사용
 void Initialize_Bullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
         bullets[i].active = 0;
@@ -63,6 +67,21 @@ void Bullet_Update() {
                         }
                     }
                     collided = 1;
+                }
+                // Demon과 충돌 검사
+                if (demon.isAttack != -2 && CollisionIntersection_RectRect(newPos.x - bullets[i].radius, newPos.y - bullets[i].radius, bullets[i].radius * 2, bullets[i].radius * 2, demon.body[demon.eye * BODY_COL + (BODY_COL / 2)].pos.x, demon.body[demon.eye * BODY_COL + (BODY_COL / 2)].pos.y, demon.body[demon.eye * BODY_COL + (BODY_COL / 2)].w, demon.body[demon.eye * BODY_COL + (BODY_COL / 2)].h)) {
+                    bullets[i].active = 0;
+                    Demon_Hit();  // Demon의 체력을 감소시키는 함수 호출
+                    collided = 1;
+                }
+
+                for (int k = 0; k < 3; k++) {
+                    if (wof.eye[k].isOpen && CollisionIntersection_RectRect(newPos.x - bullets[i].radius, newPos.y - bullets[i].radius, bullets[i].radius * 2, bullets[i].radius * 2, wof.eye[k].pos.x, wof.eye[k].pos.y, wof.eye[k].w, wof.eye[k].h)) {
+                        bullets[i].active = 0;
+                        Wof_BulletHit();  // WOF의 체력을 감소시키는 함수 호출
+                        collided = 1;
+                        break;
+                    }
                 }
 
                 if (!collided) {
