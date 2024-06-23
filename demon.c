@@ -2,7 +2,8 @@
 #include "player.h"  // Player 구조체와 관련 함수를 포함하기 위해 추가
 #include "bullet.h"  // Bullet 구조체와 관련 함수를 포함하기 위해 추가
 #include <math.h>
-
+#include "game.h"
+#include <stdio.h>
 #define HIDDEN_YELLOW CP_Color_Create(255, 255, 0, 0)
 #define YELLOW CP_Color_Create(255, 255, 0, 255)
 #define RED CP_Color_Create(255, 0, 0, 255)
@@ -177,7 +178,8 @@ void Demon_Hit()
 {
     // Demon의 눈이 반짝거릴 때 공격받으면 체력 감소
     if (demon.isAttack == 0 && demon.hitCooldown <= 0) {
-        demon.health -= 3;  // 체력 감소
+        demon.health -= 1;  // 체력 감소
+        printf("%d", demon.health);
         demon.hitCooldown = HIT_COOLDOWN;  // 쿨다운 설정
         if (demon.health <= 0) {
             Demon_Dead();  // 체력이 0 이하가 되면 Demon 제거
@@ -188,6 +190,8 @@ void Demon_Hit()
 void Demon_Dead()
 {
     demon.isAttack = -2;  // Demon을 비활성화하는 상태로 변경
+    CP_Engine_SetNextGameStateForced(game_init, game_update, game_exit);
+
 }
 
 void Demon_Twinkle_Eye(int isOpen)

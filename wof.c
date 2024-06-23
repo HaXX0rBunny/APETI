@@ -3,7 +3,8 @@
 #include "bullet.h"
 #include "collision.h"
 #include "bomb.h"
-
+#include "game.h"
+#include "gameClear.h"
 #define EYE_PADDING 30
 
 #define YELLOW CP_Color_Create(240, 240, 0, 255)
@@ -208,7 +209,7 @@ void Wof_Update_Bullets(float dt)
                 wof.bullets[i].Pos.x - wof.bullets[i].radius, wof.bullets[i].Pos.y - wof.bullets[i].radius,
                 wof.bullets[i].radius * 2, wof.bullets[i].radius * 2,
                 player.Pos.x, player.Pos.y, player.w, player.h)) {
-                Player_ReduceHealth(1);
+                Player_ReduceHealth(3);
                 wof.bullets[i].active = 0;
             }
 
@@ -231,7 +232,7 @@ void Wof_Update_Walls(float dt)
             if (CollisionIntersection_RectRect(
                 wof.walls[i].pos.x, wof.walls[i].pos.y, wof.walls[i].w, wof.walls[i].h,
                 player.Pos.x, player.Pos.y, player.w, player.h)) {
-                Player_ReduceHealth(1);
+                Player_ReduceHealth(2);
 
                 // 플레이어가 벽을 따라 밀리도록 위치 조정
                 player.Pos.x -= WALL_SPEED * dt;
@@ -296,7 +297,10 @@ void Wof_Draw()
     Wof_Draw_Walls();
     Wof_Draw_Bullets();
 }
-
+void Wof_Dead() {
+    wof.state = -1;
+    CP_Engine_SetNextGameStateForced(GameClear_init, GameClear_update, GameClear_exit);
+}
 void Wof_Update()
 {
     if (wof.state != -1) {
@@ -340,6 +344,8 @@ void Wof_Update()
             break;
         }
     }
+   
+        
 }
 
 void Wof_BulletHit()
@@ -359,7 +365,8 @@ void Wof_BulletHit()
                 wof.hitCooldown = HIT_COOLDOWN;
                 if (wof.health <= 0)
                 {
-                    wof.state = -1;
+                    
+                    Wof_Dead();
                 }
             }
         }

@@ -21,4 +21,4 @@ void Initialize_Bullets();
 void Bullet_Init(int index, CP_Vector position, CP_Vector velocity, float radius, CP_Color color);
 void Bullet_Update();
 void Bullet_Draw();
-#endif // BULLET_H
+#endif // BULLET_Hdd

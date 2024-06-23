@@ -1,5 +1,6 @@
 #include "levelEditor.h"
 #include "player.h"
+#include "quitESC.h"
 
 extern const int window_width;
 extern const int window_height;
@@ -70,13 +71,15 @@ void Edit_Add_Platform(void)
 			color = CP_Color_Create(225, 25, 125, 255);
 			objectype = enemy;
 			removable = 1;
-			movespeed = 2;
+			movespeed = 4;
 			break;
 		case KEY_1:
 			color = CP_Color_Create(0, 0, 0, 255);
 			break;
 		case KEY_2:
 			color = CP_Color_Create(255, 0, 0, 255);
+			objectype = Boss3;
+			removable = 1;
 			break;
 		case KEY_3:
 			color = CP_Color_Create(0, 255, 0, 255);
@@ -85,11 +88,12 @@ void Edit_Add_Platform(void)
 			break;
 		case KEY_4:
 			color = CP_Color_Create(0, 0, 255, 255);
-			objectype = heal;
+			objectype = Boss2;
 			removable = 1;
 			break;
 		case KEY_5:
 			color = CP_Color_Create(0, 255, 255, 255);
+
 			break;
 		case KEY_6:
 			color = CP_Color_Create(255, 0, 255, 255);
@@ -98,6 +102,8 @@ void Edit_Add_Platform(void)
 			break;
 		case KEY_7:
 			color = CP_Color_Create(255, 255, 0, 255);
+			objectype = Boss1;
+			removable = 1;
 			break;
 		case KEY_8:
 			color = CP_Color_Create(120, 120, 120, 255);
@@ -183,6 +189,8 @@ void level_editor_state_update(void)
 	Edit_Grid();
 
 	Edit_Change_Mode();
+
+	Quit_ESC();
 }
 
 void level_editor_state_exit(void)

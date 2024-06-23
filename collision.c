@@ -6,7 +6,17 @@ int CollisionIntersection_RectRect(float aX, float aY, float aW, float aH, float
     }
     return 1;  // 충돌 발생
 }
-#include "collision.h"
+
+int CollisionIntersection_RectMouse(float x, float y, float w, float h)
+{
+    float mouseX = CP_Input_GetMouseWorldX();
+    float mouseY = CP_Input_GetMouseWorldY();
+
+    if (mouseX < x || mouseX > x + w || mouseY < y || mouseY > y + h) {
+        return 0;
+    }
+    return 1;
+}
 
 int checkCollision(const struct Platform* a, const struct Platform* b) {
     if (a->Pos.x < b->Pos.x + b->w &&

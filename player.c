@@ -1,10 +1,10 @@
 #include "player.h"
 #include "dashEffect.h"
 #include "bomb.h"
+#include "gameOver.h"
 #include <stdio.h>
+#include "game.h"
 #define PLAYER_GFORCE -500.f
-
-
 #define MAX_DASH_TIMER 0.15f
 #define MAX_DASH_COOLDOWN 3.f
 
@@ -23,15 +23,16 @@ extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
 extern const int window_width;
 extern const int window_height;
 float facingDirection = 1;
-float player_insX = 300;
-float player_insY = 0;
-void Player_Init()
+
+void Player_Init(int health, float x, float y)
 {
-	player.health = 9;
+	if (health != -1)
+		player.health = health;
+
 	player.maxHealth = 10;
 
-	player.Pos.x = player_insX;
-	player.Pos.y = player_insY;
+	player.Pos.x = x;
+	player.Pos.y = y;
 
 	player.w = 30;
 	player.h = 30;
@@ -54,24 +55,33 @@ void Player_Init()
 	player.maxDashCooldown = MAX_DASH_COOLDOWN;
 
 	player.color = CP_Color_Create(255, 0, 0, 255);
+	player.stunDuration = 0.0f;
 }
+
 void Player_ReduceHealth(int value) {
 	if (player.damageCooldown <= 0.0f&& player.health >=1) {  // 쿨다운 중이 아니면 체력 감소
 		player.health -= value;
-
+		player.stunDuration = 0.5f;
 		player.damageCooldown = DAMAGE_COOLDOWN_TIME;  // 쿨다운 시간 설정
 
 		if (player.health <= 0) {
-			Player_Dead();
+			//Player_Dead();
 		}
 	}
 }
 void Player_Heal() {
 	if (player.health >0&& 10>player.health)
-		player.health ++;
+		player.health = 10;
 	
 
 }
+
+void Player_Ability_Init(int bomb, int dash)
+{
+	player.bombable = bomb;
+	player.dashable = dash;
+}
+
 void Player_AddHealth(int value)
 {
 	player.health += value;
@@ -95,7 +105,7 @@ void Player_Jump()
 
 void Player_Dash(float t)
 {
-	if (CP_Input_KeyTriggered(KEY_SPACE) && !player.isDashCooldown)
+	if (CP_Input_KeyTriggered(KEY_SPACE) && !player.isDashCooldown && player.dashable)
 	{
 		player.isDash = 1;
 		player.isDashCooldown = 1;
@@ -128,7 +138,7 @@ void Player_Move()
 	struct Platform dir[4];
 	Collision_Player_Platform(dir);
 
-	if (CP_Input_KeyTriggered(KEY_L)) {
+	if (CP_Input_KeyTriggered(KEY_L) && player.bombable) {
 		Player_ThrowBomb();
 	}
 	if (CP_Input_KeyTriggered(KEY_K)) {
@@ -185,16 +195,27 @@ void Player_Move()
 
 void Player_Dead()
 {
-
+	CP_Engine_SetNextGameState(GameOver_init, GameOver_update, GameOver_exit);
 }
 
 void Player_Update()
 {
 	float t = CP_System_GetDt();
-
-	Player_Dash(t);
-	Player_Move();
-	Player_Jump();
+	if (player.stunDuration > 0) {
+		player.stunDuration -= t;
+		if (player.stunDuration < 0) {
+			player.stunDuration = 0;
+		}
+	}
+	if(player.stunDuration==0){
+		Player_Dash(t);
+		Player_Move();
+		Player_Jump();
+	}
+	else {
+		// 스턴 상태에서는 속도 0
+		player.Velocity = CP_Vector_Set(0, 0);
+	}
 	if (player.damageCooldown > 0.0f) {
 		player.damageCooldown -= t;
 	}
@@ -206,10 +227,25 @@ void Player_Update()
 
 void Player_Draw()
 {
-	if (player.isDash) 
-		Dash_Effect(player.color, &player.Pos, &player.Velocity, player.w, player.h, 3, 0.015f);
 
-	CP_Settings_Fill(player.color);
+	if (player.isDash)
+		Dash_Effect(player.color, &player.Pos, &player.Velocity, player.w, player.h, 3, 0.015f);
+	if (player.stunDuration > 0) {
+		// 스턴 상태일 때 반짝이게 하기
+		static float blinkTimer = 0;
+		blinkTimer += CP_System_GetDt();
+		if ((int)(blinkTimer * 10) % 2 == 0) {
+			CP_Settings_Fill(CP_Color_Create(255, 0, 0, 255));  // 빨간색
+		}
+		else {
+			CP_Settings_Fill(CP_Color_Create(255, 255, 255, 255));  // 흰색
+		}
+	}
+	else
+	{
+		CP_Settings_Fill(player.color);
+	}
+
 	CP_Graphics_DrawRect(player.Pos.x, player.Pos.y, player.w, player.h);
 }
 
@@ -234,10 +270,27 @@ void Collision_Player_Platform(struct Platform dir[4])
 			platformX, platformY, platformW, platformH) && !dir[Up].exist)
 		{
 			dir[Up] = platform;
-			
-			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
-			if(platform.objecType == heal|| platform.objecType == door) { Player_Heal();
-			Remove_Platform(&platformList[i]);
+			switch (platform.objecType)
+			{
+			case Boss1:
+				Enter_Boss1();
+				break;
+			case Boss2:
+				Enter_Boss2();
+				break;
+			case Boss3:
+				Enter_Boss3();
+				break;
+			case enemy:
+				Player_ReduceHealth(1);
+				break;
+			case heal:
+				Player_Heal(); Remove_Platform(&platformList[i]);
+				break;
+			case door: 
+				Remove_Platform(&platformList[i]);
+				break;
+		
 			}
 		}
 
@@ -246,10 +299,27 @@ void Collision_Player_Platform(struct Platform dir[4])
 		{
 			dir[Down] = platform;
 
-			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
-			if (platform.objecType == heal|| platform.objecType == door) {
-				Player_Heal();
+			switch (platform.objecType)
+			{
+			case Boss1:
+				Enter_Boss1();
+				break;
+			case Boss2:
+				Enter_Boss2();
+				break;
+			case Boss3:
+				Enter_Boss3();
+				break;
+			case enemy:
+				Player_ReduceHealth(1);
+				break;
+			case heal:
+				Player_Heal(); Remove_Platform(&platformList[i]);
+				break;
+			case door:
 				Remove_Platform(&platformList[i]);
+				break;
+			
 			}
 		}
 
@@ -258,10 +328,27 @@ void Collision_Player_Platform(struct Platform dir[4])
 		{
 			dir[Right] = platform;
 
-			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
-			if (platform.objecType == heal|| platform.objecType == door) {
-				Player_Heal();
+			switch (platform.objecType)
+			{
+			case Boss1:
+				Enter_Boss1();
+				break;
+			case Boss2:
+				Enter_Boss2();
+				break;
+			case Boss3:
+				Enter_Boss3();
+				break;
+			case enemy:
+				Player_ReduceHealth(1);
+				break;
+			case heal:
+				Player_Heal(); Remove_Platform(&platformList[i]);
+				break;
+			case door:
 				Remove_Platform(&platformList[i]);
+				break;
+		
 			}
 		}
 
@@ -270,10 +357,27 @@ void Collision_Player_Platform(struct Platform dir[4])
 		{
 			dir[Left] = platform;
 
-			if (platform.objecType == enemy) { Player_ReduceHealth(1); }
-			if (platform.objecType == heal|| platform.objecType == door) {
-				Player_Heal();
+			switch (platform.objecType)
+			{
+			case Boss1:
+				Enter_Boss1();
+				break;
+			case Boss2:
+				Enter_Boss2();
+				break;
+			case Boss3:
+				Enter_Boss3();
+				break;
+			case enemy:
+				Player_ReduceHealth(1);
+				break;
+			case heal:
+				Player_Heal(); Remove_Platform(&platformList[i]);
+				break;
+			case door:
 				Remove_Platform(&platformList[i]);
+				break;
+		
 			}
 		}
 	}
@@ -291,7 +395,7 @@ void Player_Shoot() {
 }
 
 void Player_ThrowBomb() {
-	float initialSpeed = 200.0f;
+	float initialSpeed = 300.0f;
 	CP_Vector bombVelocity = { initialSpeed * facingDirection, -initialSpeed };  // 포물선을 그리도록 초기 속도 설정
 
 	for (int i = 0; i < MAX_BOMBS; i++) {

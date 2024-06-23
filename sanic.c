@@ -3,7 +3,7 @@
 #include "collision.h"
 #include "dashEffect.h"
 #include <math.h>
-
+#include "game.h"
 #define BLUE CP_Color_Create(0, 0, 255, 255)
 #define RED CP_Color_Create(255, 0, 0, 255)
 #define ACCELERATION_SPEED 10.f
@@ -11,6 +11,7 @@
 #define VELOCITY_LIMIT 50.f
 #define TWINKLE_SPEED 2.f
 #define MAX_STUN_TIMER 5.f
+#define HIT_COOLDOWN 1.f 
 
 struct Sanic sanic;
 extern struct Player player;
@@ -36,7 +37,7 @@ void Sanic_Init(float x, float y, float w, float h, int health, int damage)
 
 	sanic.color = BLUE;
 	sanic.active = 1;
-	sanic.hitCooldown = 0;
+	
 }
 
 void Sanic_Init_Des()
@@ -81,15 +82,23 @@ void Sanic_Move()
 	sanic.pos.y += sanic.velocity.y * t;
 	check_collision_sanic(&sanic, &player);
 }
-
-void Sanic_Attack()
-{
-
+void Sanic_Dead() {
+	sanic.active = 0; // Sanic 비활성화
+	CP_Engine_SetNextGameStateForced(game_init, game_update, game_exit);
 }
+
 
 int Sanic_Hit()
 {
-	
+	if (sanic.hitCooldown <= 0) {  // 피격 쿨다운 확인
+		
+		sanic.health -= 1;  // Sanic의 체력을 1 감소
+		sanic.hitCooldown = HIT_COOLDOWN;  // 피격 쿨다운 설정
+
+		if (sanic.health <= 0) {
+			Sanic_Dead();
+		}
+	}
 	return 0;
 }
 
@@ -152,7 +161,6 @@ void Sanic_Update()
 	{
 	case 0:
 		Sanic_Move();
-		Sanic_Attack();
 		if (Sanic_Hit())
 		{
 			sanic.state = 1;

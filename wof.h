@@ -38,7 +38,7 @@ typedef struct Wof
 } Wof;
 
 extern Wof wof;
-
+void Wof_Dead();
 void Wof_Init(float x, float y, float w, float h, int health, int damage);
 void Wof_Create_Wall();
 void Wof_Hit();
