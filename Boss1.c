@@ -1,0 +1,46 @@
+#include "Boss1.h"
+#include "levelEditor.h"
+#include "player.h"
+#include "ui.h"
+#include "enemyAi.h"
+#include "demon.h"
+#include "quitESC.h"
+
+void Boss1_init(void)
+{
+	Load_Level_From_File("bosslvl1.lvl");
+	Player_Init(-1, 300, 0);
+	Demon_Init(-500, -140, 400, -140, 60, 60, 5, 3);
+}
+
+void Boss1_update(void)
+{
+	CP_Graphics_ClearBackground(CP_Color_Create(255, 255, 255, 255));
+
+	updateEnemies();
+	Player_Update();
+	Player_Draw();
+	Bullet_Update();
+	Bullet_Draw();
+	Bomb_Update();
+	Bomb_Draw();
+
+	Draw_AllPlatform();
+
+	Demon_Update();
+	Demon_Draw();
+
+	UI_Health();
+	UI_Dash_Cooldown();
+
+	UI_Health();
+	UI_Dash_Cooldown();
+	Draw_AllPlatform();
+
+	Quit_ESC();
+}
+
+void Boss1_exit(void)
+{
+	Clear_Map();
+}

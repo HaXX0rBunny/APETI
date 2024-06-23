@@ -28,7 +28,7 @@ struct Player
     float damageCooldown;
 };
 void Player_Heal();
-void Player_Init();
+void Player_Init(int health, float x, float y);
 void Player_Jump();
 void Player_Move();
 void Player_Dash(float t);

@@ -20,21 +20,27 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bomb.c" />
+    <ClCompile Include="Boss1.c" />
+    <ClCompile Include="Boss2.c" />
+    <ClCompile Include="Boss3.c" />
     <ClCompile Include="bullet.c" />
     <ClCompile Include="camera.c" />
     <ClCompile Include="collision.c" />
     <ClCompile Include="dashEffect.c" />
     <ClCompile Include="game.c" />
+    <ClCompile Include="gameOver.c" />
     <ClCompile Include="gravity.c" />
     <ClCompile Include="levelEditor.c" />
     <ClCompile Include="levelSaver.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="mainMenu.c" />
     <ClCompile Include="map.c" />
     <ClCompile Include="enemyAi.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="platform.c" />
     <ClCompile Include="player.c" />
+    <ClCompile Include="quitESC.c" />
     <ClCompile Include="sanic.c" />
     <ClCompile Include="ui.c" />
     <ClCompile Include="demon.c" />
@@ -42,6 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bomb.h" />
+    <ClInclude Include="Boss1.h" />
+    <ClInclude Include="Boss2.h" />
+    <ClInclude Include="Boss3.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
@@ -50,12 +59,15 @@
     </ClInclude>
     <ClInclude Include="dashEffect.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gameOver.h" />
     <ClInclude Include="gravity.h" />
     <ClInclude Include="levelEditor.h" />
     <ClInclude Include="levelSaver.h" />
+    <ClInclude Include="mainMenu.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="quitESC.h" />
     <ClInclude Include="sanic.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="demon.h" />

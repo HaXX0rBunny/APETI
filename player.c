@@ -1,10 +1,10 @@
 #include "player.h"
 #include "dashEffect.h"
 #include "bomb.h"
+#include "gameOver.h"
 #include <stdio.h>
+
 #define PLAYER_GFORCE -500.f
-
-
 #define MAX_DASH_TIMER 0.15f
 #define MAX_DASH_COOLDOWN 3.f
 
@@ -23,15 +23,16 @@ extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
 extern const int window_width;
 extern const int window_height;
 float facingDirection = 1;
-float player_insX = 300;
-float player_insY = 0;
-void Player_Init()
+
+void Player_Init(int health, float x, float y)
 {
-	player.health = 9;
+	if (health != -1)
+		player.health = health;
+
 	player.maxHealth = 10;
 
-	player.Pos.x = player_insX;
-	player.Pos.y = player_insY;
+	player.Pos.x = x;
+	player.Pos.y = y;
 
 	player.w = 30;
 	player.h = 30;
@@ -55,6 +56,7 @@ void Player_Init()
 
 	player.color = CP_Color_Create(255, 0, 0, 255);
 }
+
 void Player_ReduceHealth(int value) {
 	if (player.damageCooldown <= 0.0f&& player.health >=1) {  // 쿨다운 중이 아니면 체력 감소
 		player.health -= value;
@@ -185,7 +187,7 @@ void Player_Move()
 
 void Player_Dead()
 {
-
+	CP_Engine_SetNextGameState(GameOver_init, GameOver_update, GameOver_exit);
 }
 
 void Player_Update()

@@ -1,5 +1,6 @@
 #include "levelEditor.h"
 #include "player.h"
+#include "quitESC.h"
 
 extern const int window_width;
 extern const int window_height;
@@ -183,6 +184,8 @@ void level_editor_state_update(void)
 	Edit_Grid();
 
 	Edit_Change_Mode();
+
+	Quit_ESC();
 }
 
 void level_editor_state_exit(void)
