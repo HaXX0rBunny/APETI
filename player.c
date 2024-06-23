@@ -81,7 +81,6 @@ void Player_Ability_Init(int bomb, int dash)
 	player.bombable = bomb;
 	player.dashable = dash;
 }
-
 void Player_AddHealth(int value)
 {
 	player.health += value;
