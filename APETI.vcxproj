@@ -28,6 +28,7 @@
     <ClCompile Include="collision.c" />
     <ClCompile Include="dashEffect.c" />
     <ClCompile Include="game.c" />
+    <ClCompile Include="gameClear.c" />
     <ClCompile Include="gameOver.c" />
     <ClCompile Include="gravity.c" />
     <ClCompile Include="levelEditor.c" />
@@ -59,6 +60,7 @@
     </ClInclude>
     <ClInclude Include="dashEffect.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gameClear.h" />
     <ClInclude Include="gameOver.h" />
     <ClInclude Include="gravity.h" />
     <ClInclude Include="levelEditor.h" />

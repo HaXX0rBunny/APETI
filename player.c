@@ -74,6 +74,13 @@ void Player_Heal() {
 	
 
 }
+
+void Player_Ability_Init(int bomb, int dash)
+{
+	player.bombable = bomb;
+	player.dashable = dash;
+}
+
 void Player_AddHealth(int value)
 {
 	player.health += value;
@@ -97,7 +104,7 @@ void Player_Jump()
 
 void Player_Dash(float t)
 {
-	if (CP_Input_KeyTriggered(KEY_SPACE) && !player.isDashCooldown)
+	if (CP_Input_KeyTriggered(KEY_SPACE) && !player.isDashCooldown && player.dashable)
 	{
 		player.isDash = 1;
 		player.isDashCooldown = 1;
@@ -130,7 +137,7 @@ void Player_Move()
 	struct Platform dir[4];
 	Collision_Player_Platform(dir);
 
-	if (CP_Input_KeyTriggered(KEY_L)) {
+	if (CP_Input_KeyTriggered(KEY_L) && player.bombable) {
 		Player_ThrowBomb();
 	}
 	if (CP_Input_KeyTriggered(KEY_K)) {

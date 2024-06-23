@@ -19,6 +19,8 @@ struct Player
     int isGrounded;
     int isDash;
     int isDashCooldown;
+    int bombable;
+    int dashable;
     float dashTimer;
     float dashCooldown;
     float maxDashTimer;
@@ -27,7 +29,9 @@ struct Player
     CP_Color color;
     float damageCooldown;
 };
+
 void Player_Heal();
+void Player_Ability_Init(int bomb, int dash);
 void Player_Init(int health, float x, float y);
 void Player_Jump();
 void Player_Move();

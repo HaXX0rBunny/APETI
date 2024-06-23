@@ -34,7 +34,6 @@ void Enter_Boss3(void)
 void game_init(void)
 {
 	Load_Level_From_File("myLevel.lvl");
-	
 }
 
 void game_update(void)

@@ -2,6 +2,7 @@
 #include "collision.h"
 #include "game.h"
 #include "quitESC.h"
+#include "player.h"
 
 #define BLACK CP_Color_Create(0, 0, 0, 255)
 #define WHITE CP_Color_Create(255, 255, 255, 255)
@@ -13,7 +14,11 @@ extern int window_height;
 void GameOver_Retry(void)
 {
 	if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
+	{
+		Player_Init(10, 300, 0);
+		Player_Ability_Init(0, 0);
 		CP_Engine_SetNextGameState(game_init, game_update, game_exit);
+	}
 }
 
 void GameOver_Quit(void)

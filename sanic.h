@@ -1,6 +1,7 @@
 #pragma once
 #include "cprocessing.h"
 #include "player.h"
+
 struct Sanic
 {
 	CP_Vector pos;
