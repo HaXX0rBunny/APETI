@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bomb.c" />
+    <ClCompile Include="bullet.c" />
     <ClCompile Include="camera.c" />
     <ClCompile Include="collision.c" />
     <ClCompile Include="dashEffect.c" />
@@ -28,6 +30,9 @@
     <ClCompile Include="levelSaver.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="map.c" />
+    <ClCompile Include="enemyAi.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="platform.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="sanic.c" />
@@ -36,8 +41,13 @@
     <ClCompile Include="wof.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bomb.h" />
+    <ClInclude Include="bullet.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
+    <ClInclude Include="enemyAi.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="dashEffect.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gravity.h" />

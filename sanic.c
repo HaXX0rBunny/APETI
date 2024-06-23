@@ -1,5 +1,6 @@
 #include "sanic.h"
 #include "player.h"
+#include "collision.h"
 #include "dashEffect.h"
 #include <math.h>
 
@@ -34,6 +35,8 @@ void Sanic_Init(float x, float y, float w, float h, int health, int damage)
 	sanic.state = 1;
 
 	sanic.color = BLUE;
+	sanic.active = 1;
+	sanic.hitCooldown = 0;
 }
 
 void Sanic_Init_Des()
@@ -76,6 +79,7 @@ void Sanic_Move()
 
 	sanic.pos.x += sanic.velocity.x * t;
 	sanic.pos.y += sanic.velocity.y * t;
+	check_collision_sanic(&sanic, &player);
 }
 
 void Sanic_Attack()
@@ -113,6 +117,20 @@ int Sanic_Stun()
 
 void Sanic_Draw()
 {
+	if (!sanic.active) {
+		return;
+	}
+	CP_Color color = sanic.color;
+
+	int i = 1;
+	for (i = 5; i >= 1; i--)
+	{
+		color.a = (unsigned char)(200 / i);
+		CP_Settings_Fill(color);
+		CP_Graphics_DrawRect(sanic.pos.x + (-sanic.velocity.x * 0.03f * i), sanic.pos.y + (-sanic.velocity.y * 0.03f * i),
+							 sanic.w * (1 - (0.05f * i)), sanic.h * (1 - (0.05f * i)));
+	}
+
 	Dash_Effect(sanic.color, &sanic.pos, &sanic.velocity, sanic.w, sanic.h, 5, 0.03f);
 	CP_Settings_Fill(sanic.color);
 	CP_Graphics_DrawRect(sanic.pos.x, sanic.pos.y, sanic.w, sanic.h);
@@ -120,6 +138,16 @@ void Sanic_Draw()
 
 void Sanic_Update()
 {
+	float dt = CP_System_GetDt();
+
+	// 피격 쿨다운 업데이트
+	if (sanic.hitCooldown > 0) {
+		sanic.hitCooldown -= dt;
+	}
+
+	if (!sanic.active) {
+		return;
+	}
 	switch (sanic.state)
 	{
 	case 0:
@@ -136,5 +164,10 @@ void Sanic_Update()
 			sanic.state = 0;
 		}
 		break;
+	}
+}
+void check_collision_sanic(struct Sanic* Sanic, struct Player* Player) {
+	if (CollisionIntersection_RectRect(Sanic->pos.x, Sanic->pos.y, Sanic->w, Sanic->h, Player->Pos.x, Player->Pos.y, Player->w, Player->h)) {
+		Player_ReduceHealth(3); // 플레이어의 체력을 3 감소
 	}
 }

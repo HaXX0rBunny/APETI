@@ -6,7 +6,7 @@
 
 enum
 {
-	MAX_PLATFORM_LIST_SIZE = 1000
+	MAX_PLATFORM_LIST_SIZE = 5000
 };
 
 enum Direction

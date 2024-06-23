@@ -2,6 +2,7 @@
 #include "levelEditor.h"
 #include "player.h"
 #include "ui.h"
+#include "enemyAi.h"
 #include "demon.h"
 #include "sanic.h"
 #include "wof.h"
@@ -38,9 +39,13 @@ void game_update(void)
 
 	Change_Mode();
 	Reset_Player();
-
+	updateEnemies();
 	Player_Update();
 	Player_Draw();
+	Bullet_Update();
+	Bullet_Draw();
+	Bomb_Update();
+	Bomb_Draw();
 
 	Draw_AllPlatform();
 
@@ -55,6 +60,10 @@ void game_update(void)
 	
 	UI_Health();
 	UI_Dash_Cooldown();
+
+	UI_Health();
+	UI_Dash_Cooldown();
+	Draw_AllPlatform();
 }
 
 void game_exit(void)
