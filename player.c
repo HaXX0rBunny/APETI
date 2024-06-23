@@ -65,7 +65,7 @@ void Player_ReduceHealth(int value) {
 		player.damageCooldown = DAMAGE_COOLDOWN_TIME;  // 쿨다운 시간 설정
 
 		if (player.health <= 0) {
-			//Player_Dead();
+			Player_Dead();
 		}
 	}
 }
@@ -272,12 +272,15 @@ void Collision_Player_Platform(struct Platform dir[4])
 			switch (platform.objecType)
 			{
 			case Boss1:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss1();
 				break;
 			case Boss2:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss2();
 				break;
 			case Boss3:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss3();
 				break;
 			case enemy:
