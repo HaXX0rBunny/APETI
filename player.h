@@ -45,3 +45,4 @@ void Player_Update();
 void Player_Shoot();
 void Player_ThrowBomb();
 void Collision_Player_Platform(struct Platform dir[4]);
+void Player_exit();

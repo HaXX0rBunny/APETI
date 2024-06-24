@@ -71,6 +71,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="quitESC.h" />
     <ClInclude Include="sanic.h" />
+    <ClInclude Include="Soundborad.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="demon.h" />
     <ClInclude Include="wof.h" />

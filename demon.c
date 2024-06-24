@@ -3,7 +3,10 @@
 #include "bullet.h"  // Bullet 구조체와 관련 함수를 포함하기 위해 추가
 #include <math.h>
 #include "game.h"
-#include <stdio.h>
+
+extern CP_Sound YdAtk;
+extern CP_Sound Bossdie;
+extern CP_Sound BossHit;
 #define HIDDEN_YELLOW CP_Color_Create(255, 255, 0, 0)
 #define YELLOW CP_Color_Create(255, 255, 0, 255)
 #define RED CP_Color_Create(255, 0, 0, 255)
@@ -18,6 +21,8 @@ extern struct Player player;  // 외부에서 선언된 Player 사용
 extern Bullet bullets[MAX_BULLETS];  // 외부에서 선언된 Bullets 배열 사용
 
 int colList[BODY_ROW];
+int a, b, cnt;
+float summon_timer, attack_timer, cooldown_timer;
 
 void Body_Init(struct Body* body, float x, float y, float desX, float desY, float w, float h, CP_Color color)
 {
@@ -34,7 +39,7 @@ void Body_Init(struct Body* body, float x, float y, float desX, float desY, floa
     body->h = h;
 
     body->color = color;
-
+    body->isplaying = 0;
     int i = 0;
     for (i = 0; i < BODY_ROW; i++)
     {
@@ -50,8 +55,12 @@ void Body_Draw(struct Body* body)
 
 int Body_Attack(struct Body* body)
 {
-    static float rot_counter = 0;
-    rot_counter += CP_System_GetDt() * ATTACK_SPEED;
+    
+    if (body->isplaying == 0) {
+        CP_Sound_Play(YdAtk);
+        body->isplaying = 1;
+    }
+    attack_timer += CP_System_GetDt() * ATTACK_SPEED;
 
     if (fabsf(body->pos.x - body->end.x) > 0.5f)
     {
@@ -60,13 +69,13 @@ int Body_Attack(struct Body* body)
             Player_ReduceHealth(demon.damage);  // 플레이어의 체력을 감소시킴
         }
 
-        body->pos.x = CP_Math_LerpFloat(body->start.x, body->end.x, rot_counter);
-        body->pos.y = CP_Math_LerpFloat(body->start.y, body->end.y, rot_counter);
+        body->pos.x = CP_Math_LerpFloat(body->start.x, body->end.x, attack_timer);
+        body->pos.y = CP_Math_LerpFloat(body->start.y, body->end.y, attack_timer);
         return 0;
     }
     else
     {
-        rot_counter = 0;
+        attack_timer = 0;
         body->pos = body->end;
         body->end = body->start;
         body->start = body->pos;
@@ -94,15 +103,23 @@ void Demon_Init(float x, float y, float desX, float desY, float w, float h, int 
     }
 
     demon.isAttack = -1;
+
+    cnt = 1;
+    b = -1;
+    a = 0;
+
+    summon_timer = 0;
+    attack_timer = 0;
+    cooldown_timer = 0;
+    demon.isplaying = 0;
 }
 
 int Demon_Summon()
 {
-    static float rot_counter = 0;
-    rot_counter += CP_System_GetDt() * SUMMON_SPEED;
+    summon_timer += CP_System_GetDt() * SUMMON_SPEED;
 
     static int alpha;
-    alpha = CP_Math_LerpInt(0, 255, rot_counter);
+    alpha = CP_Math_LerpInt(0, 255, summon_timer);
 
     int i = 0;
 
@@ -113,30 +130,29 @@ int Demon_Summon()
 
     if (alpha == 255)
     {
-        rot_counter = 0;
+        summon_timer = 0;
         return 1;
     }
 
     return 0;
 }
 
-int Demon_Selete_Body(int* cnt) {
-    int r = CP_Random_RangeInt(0, BODY_ROW - *cnt);
+int Demon_Selete_Body() {
+    int r = CP_Random_RangeInt(0, BODY_ROW - cnt);
 
     int t = colList[r];
-    colList[r] = colList[BODY_ROW - *cnt];
-    colList[BODY_ROW - *cnt] = t;
+    colList[r] = colList[BODY_ROW - cnt];
+    colList[BODY_ROW - cnt] = t;
 
     return t;
 }
 
 int Demon_Attack_Cooldown()
 {
-    static float t;
-    t += CP_System_GetDt() * SUMMON_SPEED;
-    if (t > ATTACK_COOLDOWN)
+    cooldown_timer += CP_System_GetDt() * SUMMON_SPEED;
+    if (cooldown_timer > ATTACK_COOLDOWN)
     {
-        t = 0;
+        cooldown_timer = 0;
         return 1;
     }
     return 0;
@@ -144,31 +160,27 @@ int Demon_Attack_Cooldown()
 
 int Demon_Attack()
 {
-    static int cnt = 1;
-    static int j = -1;
-    static int i = 0;
-
-    if (j == -1 && cnt == BODY_ROW + 1) {
-        if (i == BODY_COL - 1)
+    if (b == -1 && cnt == BODY_ROW + 1) {
+        if (a == BODY_COL - 1)
         {
             cnt = 1;
-            j = -1;
-            i = 0;
+            b = -1;
+            a = 0;
             return 1;
         }
 
         cnt = 1;
-        i++;
+        a++;
     }
 
-    if (j == -1)
+    if (b == -1)
     {
-        j = Demon_Selete_Body(&cnt);
+        b = Demon_Selete_Body(&cnt);
         cnt++;
     }
 
-    if (Body_Attack(&demon.body[j * BODY_COL + i])) {
-        j = -1;
+    if (Body_Attack(&demon.body[b * BODY_COL + a])) {
+        b = -1;
     }
 
     return 0;
@@ -176,12 +188,18 @@ int Demon_Attack()
 
 void Demon_Hit()
 {
+    demon.isplaying = 0;
     // Demon의 눈이 반짝거릴 때 공격받으면 체력 감소
     if (demon.isAttack == 0 && demon.hitCooldown <= 0) {
+        if (demon.isplaying == 0) {
+            CP_Sound_Play(BossHit);
+            demon.isplaying = 1;
+        }
         demon.health -= 1;  // 체력 감소
-        printf("%d", demon.health);
+
         demon.hitCooldown = HIT_COOLDOWN;  // 쿨다운 설정
         if (demon.health <= 0) {
+            demon.isplaying = 0;
             Demon_Dead();  // 체력이 0 이하가 되면 Demon 제거
         }
     }
@@ -189,6 +207,10 @@ void Demon_Hit()
 
 void Demon_Dead()
 {
+    if (demon.isplaying == 0) {
+        CP_Sound_Play(Bossdie);
+        demon.isplaying = 1;
+    }
     demon.isAttack = -2;  // Demon을 비활성화하는 상태로 변경
     CP_Engine_SetNextGameStateForced(game_init, game_update, game_exit);
 

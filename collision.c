@@ -32,7 +32,7 @@ int checkGroundCollision(const struct Platform* enemy, const struct Platform* pl
         if (platforms[i].objecType == platform &&
             enemy->Pos.x < platforms[i].Pos.x + platforms[i].w &&
             enemy->Pos.x + enemy->w > platforms[i].Pos.x &&
-            enemy->Pos.y + enemy->h == platforms[i].Pos.y) {
+            enemy->Pos.y + enemy->h == platforms[i].Pos.y&& platforms[i].exist) {
             return 1; // 적의 바로 아래에 플랫폼이 있음
         }
     }
@@ -42,7 +42,11 @@ int checkGroundCollision(const struct Platform* enemy, const struct Platform* pl
 int checkNextPosition(const struct Platform* enemy, const struct Platform* platforms, int platformCount, int moveSpeed) {
     // 적의 다음 위치를 미리 계산하여 발 밑에 플랫폼이 있는지 확인
     struct Platform nextPosition = *enemy;
-    nextPosition.Pos.x += moveSpeed;
-
+    if(moveSpeed>=0)
+        nextPosition.Pos.x += moveSpeed+50;
+    else
+    {
+        nextPosition.Pos.x += moveSpeed - 50;
+    }
     return checkGroundCollision(&nextPosition, platforms, platformCount);
 }

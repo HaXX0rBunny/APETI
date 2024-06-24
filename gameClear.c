@@ -1,6 +1,6 @@
 #include "gameClear.h"
 #include "quitESC.h"
-
+#include "player.h"
 #define BLACK CP_Color_Create(0, 0, 0, 255)
 #define WHITE CP_Color_Create(255, 255, 255, 255)
 
@@ -24,5 +24,5 @@ void GameClear_update(void)
 
 void GameClear_exit(void)
 {
-
+	Player_exit();
 }

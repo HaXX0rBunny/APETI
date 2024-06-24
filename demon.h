@@ -18,6 +18,7 @@ struct Body
 	float h;
 
 	CP_Color color;
+	int isplaying;
 };
 
 void Body_Init(struct Body* body, float x, float y, float desX, float desY, float w, float h, CP_Color color);
@@ -33,13 +34,14 @@ struct Demon
 
 	int eye;
 	int isAttack;
+	int isplaying;
 };
 
 void Demon_Init(float x, float y, float desX, float desY, float w, float h, int health, int damage);
 
 int Demon_Summon();
 
-int Demon_Selete_Body(int* cnt);
+int Demon_Selete_Body();
 int Demon_Attack_Cooldown();
 int Demon_Attack();
 

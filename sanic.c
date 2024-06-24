@@ -6,15 +6,19 @@
 #include "game.h"
 #define BLUE CP_Color_Create(0, 0, 255, 255)
 #define RED CP_Color_Create(255, 0, 0, 255)
-#define ACCELERATION_SPEED 10.f
-#define MOVE_SPEED_LIMIT 1000.f
+#define ACCELERATION_SPEED 12.f
+#define MOVE_SPEED_LIMIT 1200.f
 #define VELOCITY_LIMIT 50.f
 #define TWINKLE_SPEED 2.f
-#define MAX_STUN_TIMER 5.f
+#define MAX_STUN_TIMER 3.f
 #define HIT_COOLDOWN 1.f 
-
+extern CP_Sound spin;
+extern CP_Sound Boss2die;
+extern CP_Sound Boss2Hit;
 struct Sanic sanic;
 extern struct Player player;
+
+float stun_timer;
 
 void Sanic_Init(float x, float y, float w, float h, int health, int damage)
 {
@@ -38,6 +42,8 @@ void Sanic_Init(float x, float y, float w, float h, int health, int damage)
 	sanic.color = BLUE;
 	sanic.active = 1;
 	
+	stun_timer = 2.f;
+	sanic.isplaying = 0;
 }
 
 void Sanic_Init_Des()
@@ -83,19 +89,29 @@ void Sanic_Move()
 	check_collision_sanic(&sanic, &player);
 }
 void Sanic_Dead() {
+	if (sanic.isplaying == 0) {
+		CP_Sound_Play(Boss2die);
+		sanic.isplaying = 1;
+	}
 	sanic.active = 0; // Sanic 비활성화
 	CP_Engine_SetNextGameStateForced(game_init, game_update, game_exit);
 }
-
-
-int Sanic_Hit()
+int Sanic_Hit() {
+	return 0;
+}
+int Sanic_BulletHit()
 {
+	sanic.isplaying = 0;
 	if (sanic.hitCooldown <= 0) {  // 피격 쿨다운 확인
-		
+		if (sanic.isplaying == 0) {
+			CP_Sound_Play(Boss2Hit);
+			sanic.isplaying = 1;
+		}
 		sanic.health -= 1;  // Sanic의 체력을 1 감소
 		sanic.hitCooldown = HIT_COOLDOWN;  // 피격 쿨다운 설정
 
 		if (sanic.health <= 0) {
+			sanic.isplaying = 0;
 			Sanic_Dead();
 		}
 	}
@@ -105,19 +121,18 @@ int Sanic_Hit()
 int Sanic_Stun()
 {
 	static float rot_counter = 0;
-	static float stunTimer = 0;
 
 	float t = CP_System_GetDt();
 
 	rot_counter += rot_counter >= 1.0f ? -1.f : t * TWINKLE_SPEED;
 	sanic.color = CP_Color_Lerp(BLUE, RED, rot_counter);
 
-	stunTimer += t;
+	stun_timer += t;
 
-	if (stunTimer > MAX_STUN_TIMER)
+	if (stun_timer > MAX_STUN_TIMER)
 	{
 		sanic.color = BLUE;
-		stunTimer = 0;
+		stun_timer = 0;
 		return 1;
 	}
 	

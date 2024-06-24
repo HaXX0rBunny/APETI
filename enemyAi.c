@@ -5,17 +5,18 @@
 extern struct Platform platformList[MAX_PLATFORM_LIST_SIZE];
 extern int platformCount; // 플랫폼 배열의 크기
 
-
 void updateEnemies() {
     for (int i = 0; i < platformCount; ++i) {
         if (platformList[i].objecType == enemy) {
             struct Platform* Enemy = &platformList[i];
 
-  
             // 이동 후 발 밑에 플랫폼이 있는지 확인
+
+            CP_Vector originalPos = Enemy->Pos;
             Enemy->Pos.x += Enemy->moveSpeed;
+
             if (!checkNextPosition(Enemy, platformList, platformCount, Enemy->moveSpeed)) {
-                Enemy->Pos.x -= Enemy->moveSpeed; // 이동 취소
+                Enemy->Pos = originalPos; // 원래 위치로 되돌림
                 Enemy->moveSpeed = -Enemy->moveSpeed; // 방향 전환
             }
 
@@ -30,6 +31,7 @@ void updateEnemies() {
 
             // 벽을 만나면 방향 전환
             if (isColliding) {
+                Enemy->Pos = originalPos; // 원래 위치로 되돌림
                 Enemy->moveSpeed = -Enemy->moveSpeed; // 방향 전환
                 Enemy->Pos.x += Enemy->moveSpeed;
             }

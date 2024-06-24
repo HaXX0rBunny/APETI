@@ -4,7 +4,7 @@
 #include "gameOver.h"
 #include <stdio.h>
 #include "game.h"
-#define PLAYER_GFORCE -500.f
+#define PLAYER_GFORCE -1100.f
 #define MAX_DASH_TIMER 0.15f
 #define MAX_DASH_COOLDOWN 3.f
 
@@ -12,9 +12,15 @@ enum
 {
 	DASH_SPEED = 2000,
 	MOVE_SPEED = 300,
-	JUMP_SPEED = 450
+	JUMP_SPEED = 700
+};
+struct Music {
+	int isPlaying;
 };
 
+CP_Sound PlayerShoot;
+CP_Sound PlayerHit;
+CP_Sound PlayerBomb;
 #define DAMAGE_COOLDOWN_TIME 1.0f  // 1초 쿨다운
 struct Player player;
 
@@ -56,10 +62,15 @@ void Player_Init(int health, float x, float y)
 
 	player.color = CP_Color_Create(255, 0, 0, 255);
 	player.stunDuration = 0.0f;
+	PlayerShoot = CP_Sound_Load("./sound/bullet.wav");
+	PlayerBomb = CP_Sound_Load("./sound/bomb.wav");
+	PlayerHit = CP_Sound_Load("./sound/playerhit.wav");
+
 }
 
 void Player_ReduceHealth(int value) {
 	if (player.damageCooldown <= 0.0f&& player.health >=1) {  // 쿨다운 중이 아니면 체력 감소
+		CP_Sound_PlayAdvanced(PlayerHit, 1.0f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
 		player.health -= value;
 		player.stunDuration = 0.5f;
 		player.damageCooldown = DAMAGE_COOLDOWN_TIME;  // 쿨다운 시간 설정
@@ -138,9 +149,11 @@ void Player_Move()
 	Collision_Player_Platform(dir);
 
 	if (CP_Input_KeyTriggered(KEY_L) && player.bombable) {
+		
 		Player_ThrowBomb();
 	}
 	if (CP_Input_KeyTriggered(KEY_K)) {
+		CP_Sound_PlayAdvanced(PlayerShoot, 1.5f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
 		Player_Shoot();
 	}
 	
@@ -304,12 +317,15 @@ void Collision_Player_Platform(struct Platform dir[4])
 			switch (platform.objecType)
 			{
 			case Boss1:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss1();
 				break;
 			case Boss2:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss2();
 				break;
 			case Boss3:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss3();
 				break;
 			case enemy:
@@ -333,12 +349,15 @@ void Collision_Player_Platform(struct Platform dir[4])
 			switch (platform.objecType)
 			{
 			case Boss1:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss1();
 				break;
 			case Boss2:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss2();
 				break;
 			case Boss3:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss3();
 				break;
 			case enemy:
@@ -362,12 +381,15 @@ void Collision_Player_Platform(struct Platform dir[4])
 			switch (platform.objecType)
 			{
 			case Boss1:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss1();
 				break;
 			case Boss2:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss2();
 				break;
 			case Boss3:
+				Remove_Platform(&platformList[i]);
 				Enter_Boss3();
 				break;
 			case enemy:
@@ -402,8 +424,15 @@ void Player_ThrowBomb() {
 
 	for (int i = 0; i < MAX_BOMBS; i++) {
 		if (!bombs[i].active) {
+			CP_Sound_PlayAdvanced(PlayerBomb, 1.0f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
 			Bomb_Init(i, player.Pos, bombVelocity, 10, CP_Color_Create(255, 0, 0, 255));
 			return;
 		}
 	}
+}
+void Player_exit() {
+
+	CP_Sound_Free(&PlayerShoot);
+	CP_Sound_Free(&PlayerHit);
+	CP_Sound_Free(&PlayerBomb);
 }

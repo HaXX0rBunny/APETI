@@ -5,17 +5,37 @@
 #include "enemyAi.h"
 #include "wof.h"
 #include "quitESC.h"
+struct Music {
+	int isPlaying;
+};
 
+CP_Sound Bgm;
+CP_Sound shoot;
+CP_Sound wall;
+CP_Sound Boss3die;
+CP_Sound Boss3Hit;
+
+struct Music BGM;
 void Boss3_init(void)
 {
 	
 	Load_Level_From_File("bosslvl3.lvl");
 	Player_Init(-1, 300, 0);
 	Wof_Init(1500, 0, 200, 1000, 10, 3);
+	Bgm = CP_Sound_Load("./sound/wofbgm.mp3");
+	shoot = CP_Sound_Load("./sound/wofbullet.wav");
+	wall = CP_Sound_Load("./sound/wall.wav");
+	Boss3Hit = CP_Sound_Load("./sound/boss.wav");
+	Boss3die = CP_Sound_Load("./sound/enemyhit.wav");
+	BGM.isPlaying = 0;
 }
 
 void Boss3_update(void)
 {
+	if (BGM.isPlaying == 0) {
+		CP_Sound_PlayAdvanced(Bgm, 1.0f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
+		BGM.isPlaying = 1;
+	}
 	CP_Graphics_ClearBackground(CP_Color_Create(255, 255, 255, 255));
 
 	updateEnemies();
@@ -28,21 +48,23 @@ void Boss3_update(void)
 
 	Draw_AllPlatform();
 
-	Wof_Update();
 	Wof_Draw();
+	Wof_Update();
 
-	UI_Health();
-	UI_Dash_Cooldown();
-
-	UI_Health();
-	UI_Dash_Cooldown();
 	Draw_AllPlatform();
+	UI_Health();
+	UI_Dash_Cooldown();
 
 	Quit_ESC();
 }
 
 void Boss3_exit(void)
 {
+	CP_Sound_Free(&Bgm);
+	CP_Sound_Free(&shoot);
+	CP_Sound_Free(&wall);
+	CP_Sound_Free(&Boss3die);
+	CP_Sound_Free(&Boss3Hit);
 	Player_Ability_Init(1, 1);
 	Clear_Map();
 }

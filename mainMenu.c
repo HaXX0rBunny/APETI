@@ -16,7 +16,7 @@ void MainMenu_Start(void)
 	if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
 	{
 		Player_Init(10, 300, 0);
-		Player_Ability_Init(0, 0);
+		Player_Ability_Init(1, 1);
 		CP_Engine_SetNextGameState(game_init, game_update, game_exit);
 	}
 }

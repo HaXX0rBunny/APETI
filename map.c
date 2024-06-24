@@ -31,6 +31,7 @@ void Clear_Map()
 void Remove_Platform(struct Platform* platform)
 {
 	platform->exist = 0;
+	Get_First_Hidden_Platform();
 	platformCount--;
 }
 
