@@ -21,13 +21,14 @@ void Boss1_init(void)
 {
 	Load_Level_From_File("bosslvl1.lvl");
 	Player_Init(-1, 300, 0);
-	Demon_Init(-500, -140, 400, -140, 60, 60, 5, 3);
+
 	Bgm = CP_Sound_Load("./sound/ydbgm.mp3");
 	YdAtk = CP_Sound_Load("./sound/ydatk.wav");
 	BossHit = CP_Sound_Load("./sound/boss.wav");
 	Bossdie = CP_Sound_Load("./sound/enemyhit.wav");
 	BGM.isPlaying = 0;
 
+	Demon_Init(-500, -150, 420, -150, 60, 60, 5, 3);
 }
 
 void Boss1_update(void)
@@ -55,6 +56,9 @@ void Boss1_update(void)
 	Draw_AllPlatform();
 	UI_Health();
 	UI_Dash_Cooldown();
+
+	UI_Dash_Cooldown();
+	Draw_AllPlatform();
 
 	Quit_ESC();
 }

@@ -4,15 +4,17 @@
 #include "gameOver.h"
 #include <stdio.h>
 #include "game.h"
-#define PLAYER_GFORCE -1100.f
+#define PLAYER_GFORCE -1200.f
 #define MAX_DASH_TIMER 0.15f
 #define MAX_DASH_COOLDOWN 3.f
+
+struct Platform dir[4];
 
 enum
 {
 	DASH_SPEED = 2000,
 	MOVE_SPEED = 300,
-	JUMP_SPEED = 700
+	JUMP_SPEED = 680
 };
 struct Music {
 	int isPlaying;
@@ -46,9 +48,6 @@ void Player_Init(int health, float x, float y)
 	player.Velocity.x = 0;
 	player.Velocity.y = 0;
 
-	player.Acceleration.x = 0;
-	player.Acceleration.y = 0;
-
 	player.isGrounded = 0;
 
 	player.isDash = 0;
@@ -81,10 +80,8 @@ void Player_ReduceHealth(int value) {
 	}
 }
 void Player_Heal() {
-	if (player.health >0&& 10>player.health)
+	if (player.health > 0 && 10 > player.health)
 		player.health = 10;
-	
-
 }
 
 void Player_Ability_Init(int bomb, int dash)
@@ -107,7 +104,7 @@ void Player_Jump()
 		if (player.isGrounded)
 		{
 			player.isGrounded = 0;
-			player.Pos.y -= 1;
+			player.Pos.y -= 3;
 			player.Velocity.y = -JUMP_SPEED;
 		}
 	}
@@ -145,63 +142,59 @@ void Player_Dash(float t)
 
 void Player_Move()
 {
-	struct Platform dir[4];
-	Collision_Player_Platform(dir);
+	float t = CP_System_GetDt();
 
 	if (CP_Input_KeyTriggered(KEY_L) && player.bombable) {
-		
 		Player_ThrowBomb();
 	}
 	if (CP_Input_KeyTriggered(KEY_K)) {
 		CP_Sound_PlayAdvanced(PlayerShoot, 1.5f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
 		Player_Shoot();
 	}
+
+	player.Velocity.x = 0;
+
 	
-	if (CP_Input_KeyDown(KEY_A) && !dir[Right].exist)
+	if (CP_Input_KeyDown(KEY_A))
 	{
 		player.Velocity.x = -player.SpeedX;
 		facingDirection = -1; // Facing left
-
-
-	}
-	if (dir[Right].exist && player.Velocity.x < 0)
-	{
-		player.Velocity.x = 0;
-		player.Pos.x = dir[Right].Pos.x + dir[Right].w;
 	}
 
-	if (CP_Input_KeyDown(KEY_D) && !dir[Left].exist)
+	if (CP_Input_KeyDown(KEY_D))
 	{
 		player.Velocity.x = player.SpeedX;
 		facingDirection = 1;
 	}
-	if (dir[Left].exist && player.Velocity.x > 0)
-	{
-		player.Velocity.x = 0;
-		player.Pos.x = dir[Left].Pos.x - player.w;
-	}
-
-	if (CP_Input_KeyReleased(KEY_A) || CP_Input_KeyReleased(KEY_D))
-	{
-		player.Velocity.x = 0;
-	}
 
 	if (!dir[Down].exist)
 	{
-		Calculate_Gravity(&player.Velocity.y, &player.Acceleration.y, PLAYER_GFORCE);
+		Calculate_Gravity(&player.Velocity.y, PLAYER_GFORCE);
 		player.isGrounded = 0;
 	}
-	else
+
+	player.Pos.y += player.Velocity.y * t;
+	Collision_Player_Platform();
+	if (player.Velocity.y >= 0 && dir[Down].exist)
+	{
+		player.isGrounded = 1;
+		player.Pos.y = dir[Down].Pos.y - player.h - 1;
+		player.Velocity.y = 0;
+	}
+	if (player.Velocity.y < 0 && dir[Up].exist)
 	{
 		player.Velocity.y = 0;
-		player.isGrounded = 1;
-		if (!dir[Right].exist && !dir[Left].exist)
-			player.Pos.y = dir[Down].Pos.y - player.h;
+		player.Pos.y = dir[Up].Pos.y + dir[Up].h + 2;
 	}
 
-	if (dir[Up].exist && player.Velocity.y <= 0)
+	for (int i = 0; i < 10; i++) 
 	{
-		player.Velocity.y = 0;
+		player.Pos.x += player.Velocity.x * t / 10;
+		Collision_Player_Platform();
+		if (player.Velocity.x > 0 && dir[Right].exist)
+			player.Pos.x = dir[Right].Pos.x - player.w - 1;
+		if (player.Velocity.x < 0 && dir[Left].exist)
+			player.Pos.x = dir[Left].Pos.x + dir[Left].w + 1;
 	}
 }
 
@@ -213,6 +206,9 @@ void Player_Dead()
 void Player_Update()
 {
 	float t = CP_System_GetDt();
+
+	Collision_Player_Platform();
+
 	if (player.stunDuration > 0) {
 		player.stunDuration -= t;
 		if (player.stunDuration < 0) {
@@ -231,8 +227,6 @@ void Player_Update()
 	if (player.damageCooldown > 0.0f) {
 		player.damageCooldown -= t;
 	}
-	player.Pos.x += player.Velocity.x * t;
-	player.Pos.y += player.Velocity.y * t;
 
 	CP_Settings_Translate(-player.Pos.x + (window_width / 2), -player.Pos.y + (window_height / 2));
 }
@@ -261,7 +255,7 @@ void Player_Draw()
 	CP_Graphics_DrawRect(player.Pos.x, player.Pos.y, player.w, player.h);
 }
 
-void Collision_Player_Platform(struct Platform dir[4])
+void Collision_Player_Platform()
 {
 	int i = 0;
 
@@ -278,7 +272,7 @@ void Collision_Player_Platform(struct Platform dir[4])
 		float platformY = platform.Pos.y;
 		float platformW = platform.w;
 		float platformH = platform.h;
-		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y, player.w / 3, 1,
+		if (CollisionIntersection_RectRect(player.Pos.x + 1, player.Pos.y - 1, player.w - 2, 1,
 			platformX, platformY, platformW, platformH) && !dir[Up].exist)
 		{
 			dir[Up] = platform;
@@ -305,11 +299,10 @@ void Collision_Player_Platform(struct Platform dir[4])
 			case door: 
 				Remove_Platform(&platformList[i]);
 				break;
-		
 			}
 		}
 
-		if (CollisionIntersection_RectRect(player.Pos.x + (player.w / 6), player.Pos.y + player.h, player.w / 3, 1,
+		if (CollisionIntersection_RectRect(player.Pos.x + 1, player.Pos.y + player.h + 1, player.w - 2, 1,
 			platformX, platformY, platformW, platformH) && !dir[Down].exist)
 		{
 			dir[Down] = platform;
@@ -341,39 +334,7 @@ void Collision_Player_Platform(struct Platform dir[4])
 			}
 		}
 
-		if (CollisionIntersection_RectRect(player.Pos.x, player.Pos.y, 1, player.h / 3,
-			platformX, platformY, platformW, platformH) && !dir[Right].exist)
-		{
-			dir[Right] = platform;
-
-			switch (platform.objecType)
-			{
-			case Boss1:
-				Remove_Platform(&platformList[i]);
-				Enter_Boss1();
-				break;
-			case Boss2:
-				Remove_Platform(&platformList[i]);
-				Enter_Boss2();
-				break;
-			case Boss3:
-				Remove_Platform(&platformList[i]);
-				Enter_Boss3();
-				break;
-			case enemy:
-				Player_ReduceHealth(1);
-				break;
-			case heal:
-				Player_Heal(); Remove_Platform(&platformList[i]);
-				break;
-			case door:
-				Remove_Platform(&platformList[i]);
-				break;
-		
-			}
-		}
-
-		if (CollisionIntersection_RectRect(player.Pos.x + player.w - 1, player.Pos.y, 1, player.h / 3,
+		if (CollisionIntersection_RectRect(player.Pos.x - 1, player.Pos.y - 1, 1, player.h - 2,
 			platformX, platformY, platformW, platformH) && !dir[Left].exist)
 		{
 			dir[Left] = platform;
@@ -402,6 +363,37 @@ void Collision_Player_Platform(struct Platform dir[4])
 				Remove_Platform(&platformList[i]);
 				break;
 		
+			}
+		}
+
+		if (CollisionIntersection_RectRect(player.Pos.x + player.w + 1, player.Pos.y - 1, 1, player.h - 2,
+			platformX, platformY, platformW, platformH) && !dir[Right].exist)
+		{
+			dir[Right] = platform;
+
+			switch (platform.objecType)
+			{
+			case Boss1:
+				Remove_Platform(&platformList[i]);
+				Enter_Boss1();
+				break;
+			case Boss2:
+				Remove_Platform(&platformList[i]);
+				Enter_Boss2();
+				break;
+			case Boss3:
+				Remove_Platform(&platformList[i]);
+				Enter_Boss3();
+				break;
+			case enemy:
+				Player_ReduceHealth(1);
+				break;
+			case heal:
+				Player_Heal(); Remove_Platform(&platformList[i]);
+				break;
+			case door:
+				Remove_Platform(&platformList[i]);
+				break;
 			}
 		}
 	}
