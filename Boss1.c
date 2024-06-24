@@ -47,18 +47,11 @@ void Boss1_update(void)
 	Bullet_Draw();
 	Bomb_Update();
 	Bomb_Draw();
-
-	Draw_AllPlatform();
-
 	Demon_Update();
 	Demon_Draw();
-
 	Draw_AllPlatform();
 	UI_Health();
 	UI_Dash_Cooldown();
-
-	UI_Dash_Cooldown();
-	Draw_AllPlatform();
 
 	Quit_ESC();
 }

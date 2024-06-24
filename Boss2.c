@@ -44,12 +44,8 @@ void Boss2_update(void)
 	Bullet_Draw();
 	Bomb_Update();
 	Bomb_Draw();
-
-	Draw_AllPlatform();
-
 	Sanic_Update();
 	Sanic_Draw();
-
 	Draw_AllPlatform();
 	UI_Health();
 	UI_Dash_Cooldown();

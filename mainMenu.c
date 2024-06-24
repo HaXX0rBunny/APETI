@@ -38,7 +38,7 @@ void MainMenu_Quit(void)
 void MainMenu_init(void)
 {
 	Bgm = CP_Sound_Load("./sound/Mainmenu.mp3");
-	select = CP_Sound_Load("./sound/03 - MenuSelect.wav");
+
 	BGM.isPlaying = 0;
 	SELECT.isPlaying = 0;
 }
@@ -73,10 +73,6 @@ void MainMenu_update(void)
 
 	if (CollisionIntersection_RectMouse(window_width / 2.f - 150.0f, window_height / 2.f, 300.f, 110.f))
 	{
-		if (SELECT.isPlaying == 0) {
-			CP_Sound_PlayAdvanced(select, 0.7f, 1.0f, TRUE, CP_SOUND_GROUP_MUSIC);
-			SELECT.isPlaying = 1;
-		}
 		CP_Settings_Fill(RED);
 		MainMenu_Quit();
 	}
@@ -94,5 +90,5 @@ void MainMenu_update(void)
 void MainMenu_exit(void)
 {
 	CP_Sound_Free(&Bgm);
-	CP_Sound_Free(&select);
+
 }

@@ -45,12 +45,8 @@ void Boss3_update(void)
 	Bullet_Draw();
 	Bomb_Update();
 	Bomb_Draw();
-
-	Draw_AllPlatform();
-
 	Wof_Draw();
 	Wof_Update();
-
 	Draw_AllPlatform();
 	UI_Health();
 	UI_Dash_Cooldown();
