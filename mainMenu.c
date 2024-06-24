@@ -30,7 +30,7 @@ void MainMenu_Start(void)
 
 void MainMenu_Quit(void)
 {
-	CP_Sound_Free(&Bgm);
+
 	if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
 		CP_Engine_Terminate();
 }
@@ -54,7 +54,7 @@ void MainMenu_update(void)
 	CP_Settings_TextSize(200);
 	CP_Settings_Fill(WHITE);
 	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
-	CP_Font_DrawText("APETI", (window_width / 2.f), 50);
+	CP_Font_DrawText("MEGA ROGUE", (window_width / 2.f), 50);
 
 	CP_Settings_TextSize(110);
 

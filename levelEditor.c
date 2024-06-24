@@ -175,6 +175,7 @@ struct Platform* Platform_Mouse_Collision()
 void level_editor_state_init(void)
 {
 	Load_Level_From_File("myLevel.lvl");
+	//Load_Level_From_File("bosslvl3.lvl");
 	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
 }
 
@@ -196,5 +197,6 @@ void level_editor_state_update(void)
 void level_editor_state_exit(void)
 {
 	Save_Level_To_File("myLevel.lvl");
+	//Save_Level_To_File("bosslvl3.lvl");
 	Clear_Map();
 }

@@ -2,7 +2,7 @@
 
 enum
 {
-	CAMERA_MOVEMENT = 200
+	CAMERA_MOVEMENT = 1000
 };
 
 struct Camera camera = { {0, 0} };

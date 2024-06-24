@@ -73,5 +73,5 @@ void GameOver_update(void)
 
 void GameOver_exit(void)
 {
-	Player_exit();
+	
 }

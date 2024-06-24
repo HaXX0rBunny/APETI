@@ -172,17 +172,14 @@ void Wof_Create_Wall()
 void Wof_Hit()
 {
     int i = 0;
-    wof.isplay = 0;
+    
     for (i = 0; i < 3; i++)
     {
         if (wof.eye[i].isOpen)
         {
             if (WofEye_Hit(&wof.eye[i]))
             {
-                if (wof.isplay == 0) {
-                    CP_Sound_Play(Boss3Hit);
-                    wof.isplay = 1;
-                }
+                
                 wof.health--;
                 wof.wallCounter++;
                 if (wof.wallCounter >= 3) {
@@ -192,6 +189,7 @@ void Wof_Hit()
             }
         }
     }
+    wof.isplay = 0;
 }
 
 void Wof_Draw_Walls()
@@ -394,6 +392,10 @@ void Wof_BulletHit()
         {
             if (wof.eye[i].isOpen)
             {
+                if (wof.isplay == 0) {
+                    CP_Sound_Play(Boss3Hit);
+                    wof.isplay = 1;
+                }
                 wof.health--;
                 wof.wallCounter++;
                 if (wof.wallCounter >= 3) {
@@ -409,4 +411,5 @@ void Wof_BulletHit()
             }
         }
     }
+    wof.isplay = 0;
 }

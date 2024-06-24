@@ -25,6 +25,7 @@ void Boss2_init(void)
 	spin = CP_Sound_Load("./sound/spin.mp3");
 	Boss2Hit = CP_Sound_Load("./sound/boss.wav");
 	Boss2die = CP_Sound_Load("./sound/enemyhit.wav");
+	BGM.isPlaying = 0;
 }
 
 void Boss2_update(void)

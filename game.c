@@ -13,13 +13,7 @@ struct Music {
 
 CP_Sound Bgm;
 struct Music BGM;
-void Change_Mode(void)
-{
-	if (CP_Input_KeyTriggered(KEY_INSERT))
-	{
-		CP_Engine_SetNextGameStateForced(level_editor_state_init, level_editor_state_update, level_editor_state_exit);
-	}
-}
+
 
 void Enter_Boss1(void)
 {
@@ -49,10 +43,7 @@ void game_update(void)
 		CP_Sound_PlayAdvanced(Bgm, 0.5f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
 		BGM.isPlaying = 1;
 	}
-
 	CP_Graphics_ClearBackground(CP_Color_Create(255, 255, 255, 255));
-
-	Change_Mode();
 	updateEnemies();
 	Player_Update();
 	Player_Draw();
@@ -70,6 +61,7 @@ void game_update(void)
 
 void game_exit(void)
 {
+	Player_exit();
 	CP_Sound_Free(&Bgm);
 	Clear_Map();
 }

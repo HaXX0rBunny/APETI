@@ -71,6 +71,7 @@ int Body_Attack(struct Body* body)
 
         body->pos.x = CP_Math_LerpFloat(body->start.x, body->end.x, attack_timer);
         body->pos.y = CP_Math_LerpFloat(body->start.y, body->end.y, attack_timer);
+        
         return 0;
     }
     else
@@ -79,8 +80,11 @@ int Body_Attack(struct Body* body)
         body->pos = body->end;
         body->end = body->start;
         body->start = body->pos;
+        body->isplaying = 0;
         return 1;
     }
+
+  
 }
 
 void Demon_Init(float x, float y, float desX, float desY, float w, float h, int health, int damage)
@@ -248,6 +252,7 @@ void Demon_Draw()
 
 void Demon_Update()
 {
+
     // Demon이 활성화된 경우에만 업데이트
     if (demon.isAttack != -2) {
         float dt = CP_System_GetDt();

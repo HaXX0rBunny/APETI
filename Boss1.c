@@ -39,7 +39,6 @@ void Boss1_update(void)
 	}
 
 	CP_Graphics_ClearBackground(CP_Color_Create(255, 255, 255, 255));
-
 	updateEnemies();
 	Player_Update();
 	Player_Draw();
