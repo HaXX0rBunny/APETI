@@ -5,17 +5,11 @@
 #include "enemyAi.h"
 #include "demon.h"
 #include "quitESC.h"
-struct Music {
-	int isPlaying;
-};
 
 CP_Sound Bgm;
 CP_Sound YdAtk;
 CP_Sound Bossdie;
 CP_Sound BossHit;
-
-struct Music BGM;
-
 
 void Boss1_init(void)
 {
@@ -26,18 +20,13 @@ void Boss1_init(void)
 	YdAtk = CP_Sound_Load("./sound/ydatk.wav");
 	BossHit = CP_Sound_Load("./sound/boss.wav");
 	Bossdie = CP_Sound_Load("./sound/enemyhit.wav");
-	BGM.isPlaying = 0;
-
+	
+	CP_Sound_PlayAdvanced(Bgm, 0.5f, 1.0f, TRUE, CP_SOUND_GROUP_MUSIC);
 	Demon_Init(-500, -150, 420, -150, 60, 60, 5, 3);
 }
 
 void Boss1_update(void)
 {
-	if (BGM.isPlaying == 0) {
-		CP_Sound_PlayAdvanced(Bgm, 0.5f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
-		BGM.isPlaying=1;
-	}
-
 	CP_Graphics_ClearBackground(CP_Color_Create(255, 255, 255, 255));
 	updateEnemies();
 	Player_Update();

@@ -65,5 +65,6 @@ void logo_update(void)
 
 void logo_exit(void)
 {
-
+	CP_Image_Free(&Dgp_Logo);
+	CP_Image_Free(&Team_Logo);
 }

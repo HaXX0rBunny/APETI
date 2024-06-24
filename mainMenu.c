@@ -10,20 +10,16 @@
 
 extern int window_width;
 extern int window_height;
-struct Music {
-	int isPlaying;
-};
 
 CP_Sound Bgm;
 CP_Sound select;
-struct Music BGM;
-struct Music SELECT;
+
 void MainMenu_Start(void)
 {
 	if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
 	{
 		Player_Init(10, 300, 0);
-		Player_Ability_Init(0, 0);
+		Player_Ability_Init(1, 1);
 		CP_Engine_SetNextGameState(game_init, game_update, game_exit);
 	}
 }
@@ -38,17 +34,11 @@ void MainMenu_Quit(void)
 void MainMenu_init(void)
 {
 	Bgm = CP_Sound_Load("./sound/Mainmenu.mp3");
-
-	BGM.isPlaying = 0;
-	SELECT.isPlaying = 0;
+	CP_Sound_PlayAdvanced(Bgm, 0.7f, 1.0f, TRUE, CP_SOUND_GROUP_MUSIC);
 }
 
 void MainMenu_update(void)
 {
-	if (BGM.isPlaying == 0) {
-		CP_Sound_PlayAdvanced(Bgm, 0.7f, 1.0f, TRUE, CP_SOUND_GROUP_MUSIC);
-		BGM.isPlaying = 1;
-	}
 	CP_Graphics_ClearBackground(BLACK);
 
 	CP_Settings_TextSize(200);

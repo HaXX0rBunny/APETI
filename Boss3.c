@@ -5,9 +5,6 @@
 #include "enemyAi.h"
 #include "wof.h"
 #include "quitESC.h"
-struct Music {
-	int isPlaying;
-};
 
 CP_Sound Bgm;
 CP_Sound shoot;
@@ -15,10 +12,8 @@ CP_Sound bwall;
 CP_Sound Boss3die;
 CP_Sound Boss3Hit;
 
-struct Music BGM;
 void Boss3_init(void)
 {
-	
 	Load_Level_From_File("bosslvl3.lvl");
 	Player_Init(-1, 300, 0);
 	Wof_Init(1500, 0, 200, 1000, 10, 3);
@@ -27,15 +22,11 @@ void Boss3_init(void)
 	bwall = CP_Sound_Load("./sound/wall.wav");
 	Boss3Hit = CP_Sound_Load("./sound/boss.wav");
 	Boss3die = CP_Sound_Load("./sound/enemyhit.wav");
-	BGM.isPlaying = 0;
+	CP_Sound_PlayAdvanced(Bgm, 1.0f, 1.0f, TRUE, CP_SOUND_GROUP_MUSIC);
 }
 
 void Boss3_update(void)
 {
-	if (BGM.isPlaying == 0) {
-		CP_Sound_PlayAdvanced(Bgm, 1.0f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
-		BGM.isPlaying = 1;
-	}
 	CP_Graphics_ClearBackground(CP_Color_Create(255, 255, 255, 255));
 
 	updateEnemies();
@@ -45,9 +36,9 @@ void Boss3_update(void)
 	Bullet_Draw();
 	Bomb_Update();
 	Bomb_Draw();
+	Draw_AllPlatform();
 	Wof_Draw();
 	Wof_Update();
-	Draw_AllPlatform();
 	UI_Health();
 	UI_Dash_Cooldown();
 
