@@ -11,7 +11,7 @@ struct Music {
 
 CP_Sound Bgm;
 CP_Sound shoot;
-CP_Sound wall;
+CP_Sound bwall;
 CP_Sound Boss3die;
 CP_Sound Boss3Hit;
 
@@ -24,7 +24,7 @@ void Boss3_init(void)
 	Wof_Init(1500, 0, 200, 1000, 10, 3);
 	Bgm = CP_Sound_Load("./sound/wofbgm.mp3");
 	shoot = CP_Sound_Load("./sound/wofbullet.wav");
-	wall = CP_Sound_Load("./sound/wall.wav");
+	bwall = CP_Sound_Load("./sound/wall.wav");
 	Boss3Hit = CP_Sound_Load("./sound/boss.wav");
 	Boss3die = CP_Sound_Load("./sound/enemyhit.wav");
 	BGM.isPlaying = 0;
@@ -62,7 +62,7 @@ void Boss3_exit(void)
 {
 	CP_Sound_Free(&Bgm);
 	CP_Sound_Free(&shoot);
-	CP_Sound_Free(&wall);
+	CP_Sound_Free(&bwall);
 	CP_Sound_Free(&Boss3die);
 	CP_Sound_Free(&Boss3Hit);
 	Player_Ability_Init(1, 1);

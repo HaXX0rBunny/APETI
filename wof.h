@@ -35,6 +35,7 @@ typedef struct Wof
     WofEye eye[3];
     Wall walls[MAX_WALLS];
     Bullet bullets[MAX_BULLETS];
+    int isplay;
 } Wof;
 
 extern Wof wof;

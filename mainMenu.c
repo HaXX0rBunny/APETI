@@ -10,29 +10,45 @@
 
 extern int window_width;
 extern int window_height;
+struct Music {
+	int isPlaying;
+};
 
+CP_Sound Bgm;
+CP_Sound select;
+struct Music BGM;
+struct Music SELECT;
 void MainMenu_Start(void)
 {
 	if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
 	{
 		Player_Init(10, 300, 0);
-		Player_Ability_Init(0, 1);
+		Player_Ability_Init(0, 0);
 		CP_Engine_SetNextGameState(game_init, game_update, game_exit);
 	}
 }
 
 void MainMenu_Quit(void)
 {
+	CP_Sound_Free(&Bgm);
 	if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT))
 		CP_Engine_Terminate();
 }
 
 void MainMenu_init(void)
 {
+	Bgm = CP_Sound_Load("./sound/Mainmenu.mp3");
+	select = CP_Sound_Load("./sound/03 - MenuSelect.wav");
+	BGM.isPlaying = 0;
+	SELECT.isPlaying = 0;
 }
 
 void MainMenu_update(void)
 {
+	if (BGM.isPlaying == 0) {
+		CP_Sound_PlayAdvanced(Bgm, 0.7f, 1.0f, TRUE, CP_SOUND_GROUP_MUSIC);
+		BGM.isPlaying = 1;
+	}
 	CP_Graphics_ClearBackground(BLACK);
 
 	CP_Settings_TextSize(200);
@@ -57,6 +73,10 @@ void MainMenu_update(void)
 
 	if (CollisionIntersection_RectMouse(window_width / 2.f - 150.0f, window_height / 2.f, 300.f, 110.f))
 	{
+		if (SELECT.isPlaying == 0) {
+			CP_Sound_PlayAdvanced(select, 0.7f, 1.0f, TRUE, CP_SOUND_GROUP_MUSIC);
+			SELECT.isPlaying = 1;
+		}
 		CP_Settings_Fill(RED);
 		MainMenu_Quit();
 	}
@@ -67,11 +87,12 @@ void MainMenu_update(void)
 
 	CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
 	CP_Font_DrawText("QUIT", (window_width / 2.f), window_height / 2.f);
-
+	
 	Quit_ESC();
 }
 
 void MainMenu_exit(void)
 {
-	
+	CP_Sound_Free(&Bgm);
+	CP_Sound_Free(&select);
 }

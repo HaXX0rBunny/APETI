@@ -20,7 +20,11 @@ extern struct Player player;
 
 int eyeList[3];
 float open_timer, close_timer;
-
+int isplay=0;
+extern CP_Sound shoot;
+extern CP_Sound bwall;
+extern CP_Sound Boss3die;
+extern CP_Sound Boss3Hit;
 void WofEye_Init(struct WofEye* wofEye, float x, float y, float w, float h, int damage)
 {
     wofEye->pos.x = x;
@@ -38,6 +42,10 @@ void WofEye_Init(struct WofEye* wofEye, float x, float y, float w, float h, int 
 
 void WofEye_Attack(struct WofEye* wofEye)
 {
+    if (isplay == 0) {
+        CP_Sound_PlayAdvanced(shoot, 0.3f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
+        isplay = 1;
+    }
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (!wof.bullets[i].active) {
             wof.bullets[i].Pos = wofEye->pos;
@@ -53,6 +61,7 @@ void WofEye_Attack(struct WofEye* wofEye)
 
 int WofEye_Hit(struct WofEye* wofEye)
 {
+    
     return 0;
 }
 
@@ -60,7 +69,7 @@ int WofEye_Open(struct WofEye* wofEye)
 {
     static float eyeH = 0;
 
-    open_timer += CP_System_GetDt();
+    open_timer += CP_System_GetDt()*2;
     eyeH = CP_Math_LerpFloat(wofEye->h / 2.f, 0, open_timer);
 
     CP_Settings_Fill(GRAY);
@@ -78,7 +87,7 @@ int WofEye_Open(struct WofEye* wofEye)
 
 int WofEye_Close(struct WofEye* wofEye)
 {
-    close_timer += CP_System_GetDt();
+    close_timer += CP_System_GetDt()*2;
     static float eyeH = 0;
     eyeH = CP_Math_LerpFloat(0, wofEye->h / 2.f, close_timer);
 
@@ -119,6 +128,7 @@ void Wall_Init(struct Wall* wall, float x, float y, float w, float h)
     wall->h = h;
     wall->active = 1;
     wall->color = CP_Color_Create(25, 255, 255, 150);
+ 
 }
 
 void Wof_Init(float x, float y, float w, float h, int health, int damage)
@@ -145,10 +155,12 @@ void Wof_Init(float x, float y, float w, float h, int health, int damage)
     }
     wof.state = 0;
     wof.color = GRAY;
+    wof.isplay = 0;
 }
 
 void Wof_Create_Wall()
 {
+    
     for (int i = 0; i < MAX_WALLS; i++) {
         if (!wof.walls[i].active) {
             Wall_Init(&wof.walls[i], wof.pos.x - 200, wof.pos.y, 200, wof.h);
@@ -160,12 +172,17 @@ void Wof_Create_Wall()
 void Wof_Hit()
 {
     int i = 0;
+    wof.isplay = 0;
     for (i = 0; i < 3; i++)
     {
         if (wof.eye[i].isOpen)
         {
             if (WofEye_Hit(&wof.eye[i]))
             {
+                if (wof.isplay == 0) {
+                    CP_Sound_Play(Boss3Hit);
+                    wof.isplay = 1;
+                }
                 wof.health--;
                 wof.wallCounter++;
                 if (wof.wallCounter >= 3) {
@@ -236,7 +253,10 @@ void Wof_Update_Walls(float dt)
     for (int i = 0; i < MAX_WALLS; i++) {
         if (wof.walls[i].active) {
             wof.walls[i].pos.x -= WALL_SPEED * dt;
-
+            if (wof.isplay == 0) {
+                CP_Sound_PlayAdvanced(bwall, 0.3f, 1.0f, FALSE, CP_SOUND_GROUP_MUSIC);
+                isplay = 1;
+            }
             // 벽이 플레이어와 충돌하는지 확인
             if (CollisionIntersection_RectRect(
                 wof.walls[i].pos.x, wof.walls[i].pos.y, wof.walls[i].w, wof.walls[i].h,
@@ -264,6 +284,7 @@ void Wof_Update_Walls(float dt)
                     bombs[k].Pos.x - bombs[k].radius, bombs[k].Pos.y - bombs[k].radius,
                     bombs[k].radius * 2, bombs[k].radius * 2)) {
                     wof.walls[i].active = 0;
+                    bombs[k].active = 0;
                 }
             }
 
@@ -272,7 +293,9 @@ void Wof_Update_Walls(float dt)
                 wof.walls[i].active = 0;
             }
         }
+        
     }
+    
 }
 
 int Wof_Timer()
@@ -308,11 +331,17 @@ void Wof_Draw()
 }
 void Wof_Dead() {
     wof.state = -1;
+    if (wof.isplay == 0) {
+        CP_Sound_Play(Boss3die);
+        wof.isplay = 1;
+    }
     CP_Engine_SetNextGameStateForced(GameClear_init, GameClear_update, GameClear_exit);
 }
 
 void Wof_Update()
 {
+    isplay = 0;
+
     if (wof.state != -1) {
         float dt = CP_System_GetDt();
 
@@ -339,6 +368,7 @@ void Wof_Update()
             }
             break;
         case 2:
+
             WofEye_Attack(&wof.eye[r]);
             if (Wof_Timer())
             {

@@ -19,7 +19,7 @@ void Boss2_init(void)
 {
 
 	Load_Level_From_File("bosslvl2.lvl");
-	Player_Init(-1, 300, 0);
+	Player_Init(-1, 300, -300);
 	Sanic_Init(300,-300, 60, 60, 10, 3);
 	Bgm = CP_Sound_Load("./sound/bs2bgm.mp3");
 	spin = CP_Sound_Load("./sound/spin.mp3");
