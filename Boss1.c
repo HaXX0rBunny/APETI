@@ -30,12 +30,9 @@ void Boss1_update(void)
 	Demon_Update();
 	Demon_Draw();
 
-	UI_Health();
-	UI_Dash_Cooldown();
-
-	UI_Health();
-	UI_Dash_Cooldown();
 	Draw_AllPlatform();
+	UI_Health();
+	UI_Dash_Cooldown();
 
 	Quit_ESC();
 }

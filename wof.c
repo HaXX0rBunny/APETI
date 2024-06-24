@@ -12,13 +12,14 @@
 #define MAX_TIMER 1.f
 #define HIT_COOLDOWN 1.f
 #define WALL_SPEED 100.f
-#define BULLET_SPEED 500.f
-#define BULLET_RADIUS 20.f
+#define BULLET_SPEED 800.f
+#define BULLET_RADIUS 40.f
 
 struct Wof wof;
 extern struct Player player;
 
 int eyeList[3];
+float open_timer, close_timer;
 
 void WofEye_Init(struct WofEye* wofEye, float x, float y, float w, float h, int damage)
 {
@@ -30,6 +31,9 @@ void WofEye_Init(struct WofEye* wofEye, float x, float y, float w, float h, int 
     wofEye->isOpen = 0;
     wofEye->eyeCover_color = GRAY;
     wofEye->color = YELLOW;
+
+    open_timer = 0;
+    close_timer = 0;
 }
 
 void WofEye_Attack(struct WofEye* wofEye)
@@ -54,15 +58,18 @@ int WofEye_Hit(struct WofEye* wofEye)
 
 int WofEye_Open(struct WofEye* wofEye)
 {
-    static float rot_counter = 0;
-    rot_counter += CP_System_GetDt();
     static float eyeH = 0;
-    eyeH = CP_Math_LerpFloat(wofEye->h / 2.f, 0, rot_counter);
+
+    open_timer += CP_System_GetDt();
+    eyeH = CP_Math_LerpFloat(wofEye->h / 2.f, 0, open_timer);
+
+    CP_Settings_Fill(GRAY);
     CP_Graphics_DrawRect(wofEye->pos.x, wofEye->pos.y, wofEye->w, eyeH);
     CP_Graphics_DrawRect(wofEye->pos.x, wofEye->pos.y + wofEye->h - eyeH, wofEye->w, eyeH);
-    if (eyeH < 0.01f)
+
+    if (open_timer > 0.99f)
     {
-        rot_counter = 0;
+        open_timer = 0;
         eyeH = wofEye->h / 2.f;
         return 1;
     }
@@ -71,15 +78,17 @@ int WofEye_Open(struct WofEye* wofEye)
 
 int WofEye_Close(struct WofEye* wofEye)
 {
-    static float rot_counter = 0;
-    rot_counter += CP_System_GetDt();
+    close_timer += CP_System_GetDt();
     static float eyeH = 0;
-    eyeH = CP_Math_LerpFloat(0, wofEye->h / 2.f, rot_counter);
+    eyeH = CP_Math_LerpFloat(0, wofEye->h / 2.f, close_timer);
+
+    CP_Settings_Fill(GRAY);
     CP_Graphics_DrawRect(wofEye->pos.x, wofEye->pos.y, wofEye->w, eyeH);
     CP_Graphics_DrawRect(wofEye->pos.x, wofEye->pos.y + wofEye->h - eyeH, wofEye->w, eyeH);
-    if (eyeH > (wofEye->h / 2.f - 0.2f))
+
+    if (close_timer > 0.99f)
     {
-        rot_counter = 0;
+        close_timer = 0;
         eyeH = 0;
         return 1;
     }
@@ -301,6 +310,7 @@ void Wof_Dead() {
     wof.state = -1;
     CP_Engine_SetNextGameStateForced(GameClear_init, GameClear_update, GameClear_exit);
 }
+
 void Wof_Update()
 {
     if (wof.state != -1) {
@@ -344,8 +354,6 @@ void Wof_Update()
             break;
         }
     }
-   
-        
 }
 
 void Wof_BulletHit()

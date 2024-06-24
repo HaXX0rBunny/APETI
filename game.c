@@ -50,13 +50,8 @@ void game_update(void)
 	Bomb_Draw();
 
 	Draw_AllPlatform();
-	
 	UI_Health();
 	UI_Dash_Cooldown();
-
-	UI_Health();
-	UI_Dash_Cooldown();
-	Draw_AllPlatform();
 
 	Quit_ESC();
 }

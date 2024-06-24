@@ -28,15 +28,12 @@ void Boss3_update(void)
 
 	Draw_AllPlatform();
 
-	Wof_Update();
 	Wof_Draw();
+	Wof_Update();
 
-	UI_Health();
-	UI_Dash_Cooldown();
-
-	UI_Health();
-	UI_Dash_Cooldown();
 	Draw_AllPlatform();
+	UI_Health();
+	UI_Dash_Cooldown();
 
 	Quit_ESC();
 }

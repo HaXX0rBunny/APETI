@@ -28,6 +28,7 @@ void Sanic_Init_Des();
 void Sanic_Move();
 void Sanic_Dead();
 int Sanic_Hit();
+int Sanic_BulletHit();
 int Sanic_Stun();
 void Sanic_Draw();
 void Sanic_Update();

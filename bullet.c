@@ -58,7 +58,7 @@ void Bullet_Update() {
                 // Sanic과 충돌 검사
                 if (sanic.active && CollisionIntersection_RectRect(newPos.x - bullets[i].radius, newPos.y - bullets[i].radius, bullets[i].radius * 2, bullets[i].radius * 2, sanic.pos.x, sanic.pos.y, sanic.w, sanic.h)) {
                     bullets[i].active = 0;
-                    Sanic_Hit();
+                    Sanic_BulletHit();
                     collided = 1;
                 }
                 // Demon과 충돌 검사

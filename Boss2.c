@@ -30,12 +30,9 @@ void Boss2_update(void)
 	Sanic_Update();
 	Sanic_Draw();
 
-	UI_Health();
-	UI_Dash_Cooldown();
-
-	UI_Health();
-	UI_Dash_Cooldown();
 	Draw_AllPlatform();
+	UI_Health();
+	UI_Dash_Cooldown();
 
 	Quit_ESC();
 }
