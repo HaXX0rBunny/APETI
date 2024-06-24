@@ -14,7 +14,7 @@ enum
 {
 	DASH_SPEED = 2000,
 	MOVE_SPEED = 300,
-	JUMP_SPEED = 680
+	JUMP_SPEED = 750
 };
 struct Music {
 	int isPlaying;
