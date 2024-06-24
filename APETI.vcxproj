@@ -33,6 +33,7 @@
     <ClCompile Include="gravity.c" />
     <ClCompile Include="levelEditor.c" />
     <ClCompile Include="levelSaver.c" />
+    <ClCompile Include="logo.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="mainMenu.c" />
     <ClCompile Include="map.c" />
@@ -65,6 +66,7 @@
     <ClInclude Include="gravity.h" />
     <ClInclude Include="levelEditor.h" />
     <ClInclude Include="levelSaver.h" />
+    <ClInclude Include="logo.h" />
     <ClInclude Include="mainMenu.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="platform.h" />

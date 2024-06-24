@@ -14,7 +14,7 @@ enum
 {
 	DASH_SPEED = 2000,
 	MOVE_SPEED = 300,
-	JUMP_SPEED = 680
+	JUMP_SPEED = 750
 };
 
 #define DAMAGE_COOLDOWN_TIME 1.0f  // 1ÃÊ Äð´Ù¿î
