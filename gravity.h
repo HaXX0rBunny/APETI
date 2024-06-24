@@ -1,4 +1,4 @@
 #pragma once
 #include "cprocessing.h"
 
-void Calculate_Gravity(float* yVel, float* yAcc, float g);
+void Calculate_Gravity(float* yVel, float g);

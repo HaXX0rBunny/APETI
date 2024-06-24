@@ -10,7 +10,7 @@ void Boss1_init(void)
 {
 	Load_Level_From_File("bosslvl1.lvl");
 	Player_Init(-1, 300, 0);
-	Demon_Init(-500, -140, 400, -140, 60, 60, 5, 3);
+	Demon_Init(-500, -150, 420, -150, 60, 60, 5, 3);
 }
 
 void Boss1_update(void)
